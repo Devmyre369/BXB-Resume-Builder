@@ -578,6 +578,22 @@
 
         .draft-toolbar-inner .btn { min-height: 42px; }
         .theme-toggle { white-space: nowrap; }
+        .resume-library-note {
+            display: flex;
+            flex: 1 0 100%;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 6px 12px;
+            margin-top: 2px;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: var(--card-bg);
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.6;
+        }
+        .resume-library-note strong { color: var(--green); }
 
         /* Template 1: ATS-first. This is the default document design. */
 
@@ -789,7 +805,9 @@
                 gap: 8px;
             }
 
-            .draft-toolbar-actions #newResume { grid-column: 1 / -1; }
+            .draft-toolbar-actions #newResume,
+            .draft-toolbar-actions #saveResume { grid-column: 1 / -1; }
+            .resume-library-note { grid-column: 1 / -1; }
             .draft-toolbar-actions .btn {
                 min-width: 0;
                 padding: 8px;
@@ -1072,6 +1090,127 @@
         .brand small, .page-heading p, .section-title p,
         .preview-heading p, .field-hint { color: var(--muted); }
 
+
+
+        /* =========================================================
+           RESUME LIBRARY SIDEBAR
+        ========================================================= */
+        .header-left { display:flex; align-items:center; gap:12px; min-width:0; }
+        .back-to-home { white-space:nowrap; }
+        .sidebar-toggle { display:none; white-space:nowrap; }
+        .resume-sidebar {
+            position:fixed; z-index:30; top:72px; bottom:0; left:0;
+            display:flex; flex-direction:column; gap:17px; width:282px;
+            padding:22px 15px 24px; overflow-y:auto; overscroll-behavior:contain;
+            background:var(--panel); border-right:1px solid var(--border);
+            box-shadow:8px 0 30px rgba(0,0,0,.04);
+        }
+        .sidebar-heading-row { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+        .sidebar-eyebrow { color:var(--accent); font-size:9px; font-weight:800; letter-spacing:1.7px; }
+        .sidebar-heading-row h2 { margin:4px 0 3px; font-family:"Manrope",sans-serif; font-size:20px; line-height:1.35; }
+        .sidebar-heading-row p { margin:0; color:var(--muted); font-size:11px; }
+        .sidebar-close { display:none; flex-shrink:0; width:36px; height:36px; border:1px solid var(--border); border-radius:9px; background:var(--panel2); color:var(--text); font-size:23px; line-height:1; }
+        .sidebar-back-link { display:flex; align-items:center; gap:9px; color:var(--muted); font-size:12px; padding:9px 10px; border:1px solid var(--border); border-radius:9px; }
+        .sidebar-back-link:hover { color:var(--text); border-color:var(--accent); }
+        .sidebar-create, .sidebar-save { width:100%; min-height:44px; }
+        .sidebar-section { display:grid; gap:10px; }
+        .sidebar-section + .sidebar-section { padding-top:16px; border-top:1px solid var(--border); }
+        .sidebar-section-heading { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+        .sidebar-section-heading h3 { margin:0; color:var(--text); font-size:12px; font-weight:800; }
+        .sidebar-count { color:var(--muted); font-size:10px; text-align:right; }
+        .resume-library-list { display:grid; gap:7px; }
+        .resume-library-item { display:flex; align-items:center; gap:9px; width:100%; min-width:0; padding:10px 9px; text-align:left; border:1px solid transparent; border-radius:11px; background:transparent; color:var(--text); transition:background .15s ease,border-color .15s ease; }
+        .resume-library-item:hover { border-color:var(--border); background:var(--panel2); }
+        .resume-library-item.is-active { border-color:rgba(182,167,255,.55); background:rgba(182,167,255,.11); }
+        :root[data-theme="light"] .resume-library-item.is-active { border-color:rgba(101,84,200,.45); background:rgba(101,84,200,.08); }
+        .resume-library-icon { display:grid; flex:0 0 34px; width:34px; height:38px; place-items:center; border:1px solid var(--border); border-radius:8px; background:var(--input-bg); color:var(--accent); font-size:17px; }
+        .resume-library-copy { display:grid; flex:1; min-width:0; gap:2px; }
+        .resume-library-copy strong { overflow:hidden; color:var(--text); font-size:11px; font-weight:700; text-overflow:ellipsis; white-space:nowrap; }
+        .resume-library-copy small { overflow:hidden; color:var(--muted); font-size:9px; text-overflow:ellipsis; white-space:nowrap; }
+        .resume-library-active-mark { color:var(--accent); font-size:13px; font-weight:800; }
+        .resume-library-empty { padding:12px 10px; border:1px dashed var(--border); border-radius:9px; color:var(--muted); font-size:11px; line-height:1.7; }
+        .sidebar-template-list { display:grid; gap:7px; }
+        .template-option { display:flex; align-items:center; gap:9px; width:100%; min-width:0; padding:9px; border:1px solid var(--border); border-radius:10px; background:transparent; color:var(--text); text-align:left; }
+        .template-option:hover { border-color:var(--accent); }
+        .template-option.is-selected { border-color:var(--accent); background:rgba(182,167,255,.09); }
+        .template-option-copy { display:grid; flex:1; min-width:0; gap:2px; }
+        .template-option-copy strong { font-size:11px; line-height:1.4; }
+        .template-option-copy small { color:var(--muted); font-size:9px; line-height:1.45; }
+        .template-check { visibility:hidden; color:var(--accent); font-size:14px; font-weight:800; }
+        .template-option.is-selected .template-check { visibility:visible; }
+        .template-mini { display:flex; flex:0 0 33px; flex-direction:column; gap:3px; width:33px; height:41px; padding:6px 4px; overflow:hidden; border:1px solid var(--border); border-radius:5px; background:#fff; }
+        .template-mini i { display:block; height:3px; border-radius:2px; background:#cbd0dd; }
+        .template-mini i:first-child { width:70%; height:5px; background:#6758a7; }
+        .template-mini-ats i:first-child { background:#343b4b; }
+        .template-mini-modern { padding-top:4px; border-top:6px solid #172943; }
+        .template-mini-modern i:first-child { background:#72b7f3; }
+        .template-mini-academic { align-items:center; }
+        .template-mini-academic i { width:85%; }
+        .template-mini-academic i:first-child { width:70%; background:#376a5b; }
+        .sidebar-management { gap:9px; }
+        .sidebar-action-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+        .sidebar-action-grid .btn { min-width:0; padding:8px; }
+        .btn-danger { color:#ff9aaa; border-color:rgba(255,125,145,.28); background:rgba(255,125,145,.055); }
+        :root[data-theme="light"] .btn-danger { color:#b4233a; border-color:rgba(180,35,58,.20); background:rgba(180,35,58,.05); }
+        .sidebar-backup { padding-top:14px; border-top:1px solid var(--border); }
+        .sidebar-backup summary { color:var(--muted); font-size:11px; font-weight:700; cursor:pointer; }
+        .sidebar-backup-actions { display:grid; gap:7px; padding-top:10px; }
+        .sidebar-backup-actions .btn { justify-content:flex-start; width:100%; min-width:0; padding:8px 10px; text-align:left; }
+        .sidebar-storage-note { display:flex; align-items:flex-start; gap:8px; margin-top:auto; padding-top:14px; border-top:1px solid var(--border); color:var(--muted); font-size:10px; line-height:1.65; }
+        .storage-dot { flex:0 0 7px; width:7px; height:7px; margin-top:5px; border-radius:50%; background:var(--green); }
+        .sidebar-backdrop { display:none; }
+        .workspace { width:calc(100% - 326px); max-width:none; margin:28px 22px 60px 304px; }
+
+        @media (max-width:1240px) and (min-width:1101px) {
+            .workspace { grid-template-columns:minmax(0,1fr); width:calc(100% - 326px); }
+            .preview-panel { position:static; }
+            .resume-paper { max-width:790px; }
+        }
+        @media (max-width:1100px) {
+            .sidebar-toggle { display:inline-flex; }
+            .resume-sidebar { top:0; z-index:60; width:min(330px,88vw); padding:22px 16px 26px; transform:translateX(-105%); transition:transform .22s ease; box-shadow:16px 0 42px rgba(0,0,0,.20); }
+            .resume-sidebar.is-open { transform:translateX(0); }
+            .sidebar-close { display:inline-grid; place-items:center; }
+            .sidebar-backdrop:not([hidden]) { display:block; position:fixed; inset:0; z-index:55; border:0; border-radius:0; background:rgba(7,10,18,.58); backdrop-filter:blur(2px); }
+            body.sidebar-open { overflow:hidden; }
+            .workspace { grid-template-columns:minmax(0,1fr); width:min(850px,calc(100% - 32px)); margin:24px auto 45px; }
+            .preview-panel { position:static; }
+        }
+        @media (max-width:700px) {
+            .app-header { position:sticky; z-index:40; flex-wrap:wrap; padding:10px 12px; }
+            .header-left { flex:1; gap:8px; }
+            .header-left .brand { gap:7px; }
+            .sidebar-toggle { padding:8px 9px; min-height:38px; font-size:11px; }
+            .header-actions { width:100%; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; }
+            .header-actions .save-status { display:none; }
+            .header-actions .btn { width:100%; min-width:0; min-height:40px; padding:7px 4px; font-size:10px; white-space:normal; text-align:center; }
+            .workspace { width:calc(100% - 24px); margin:18px auto 36px; gap:18px; }
+            .field-grid { grid-template-columns:minmax(0,1fr); }
+            .field-full { grid-column:auto; }
+            .form-section { padding:16px; }
+            .resume-paper { padding:24px 20px; min-height:0; }
+            .paper-wrap { padding:8px; }
+            .preview-heading { align-items:flex-start; }
+            .page-heading h1 { font-size:25px; }
+            .ri-panel { padding:18px; }
+        }
+        @media (max-width:380px) {
+            .header-left { flex-wrap:wrap; }
+            .header-left .brand { margin-left:auto; }
+            .header-actions { grid-template-columns:repeat(4,minmax(0,1fr)); gap:4px; }
+            .header-actions .btn { font-size:9px; padding:6px 2px; }
+            .workspace { width:92%; }
+            .form-section { padding:13px; }
+            .ri-panel { padding:13px; }
+        }
+        @media (prefers-reduced-motion:reduce) {
+            .resume-sidebar { transition:none; }
+        }
+        @media print {
+            .resume-sidebar, .sidebar-backdrop, .sidebar-toggle, .back-to-home { display:none !important; }
+            .workspace { width:100% !important; max-width:none !important; margin:0 !important; }
+        }
+
     </style>
 
     <script>
@@ -1090,18 +1229,27 @@
 
 <body>
     <header class="app-header">
-        <a class="brand" href="{% url 'resume_builder:home' %}">
-            <span class="brand-mark">B</span>
-            <span>
-                BxB
-                <small>AI RESUME BUILDER</small>
-            </span>
-        </a>
+        <div class="header-left">
+            <button class="btn sidebar-toggle" id="openSidebar" type="button"
+                    aria-controls="resumeSidebar" aria-expanded="false">
+                ☰
+            </button>
+            <a class="brand" href="{% url 'resume_builder:home' %}">
+                <span class="brand-mark">B</span>
+                <span>
+                    BxB
+                    <small>AI RESUME BUILDER</small>
+                </span>
+            </a>
+        </div>
 
         <div class="header-actions">
             <span class="save-status" id="saveStatus" aria-live="polite">
                 Draft ready
             </span>
+            <a class="btn back-to-home" href="{% url 'resume_builder:home' %}" title="Back to the Resume Builder home page">
+                ← Back
+            </a>
             <button class="btn theme-toggle" id="themeToggle" type="button"
                     aria-label="Switch to light theme" aria-pressed="false">
                 ☀ Light
@@ -1113,29 +1261,88 @@
         </div>
     </header>
 
-    <section class="draft-toolbar" aria-label="Resume management">
-        <div class="draft-toolbar-inner">
-            <div class="draft-control">
-                <label for="resumeSelect">Your resumes</label>
-                <select id="resumeSelect" aria-label="Select a saved resume"></select>
+    <aside class="resume-sidebar" id="resumeSidebar" aria-label="Resume library">
+        <div class="sidebar-heading-row">
+            <div>
+                <span class="sidebar-eyebrow">YOUR WORKSPACE</span>
+                <h2>Resume library</h2>
+                <p>Manage resumes, drafts and designs.</p>
             </div>
-
-            <div class="draft-control draft-control-template">
-                <label for="templateSelect">Template</label>
-                <select id="templateSelect" aria-label="Choose a resume template" title="Choose a resume template">
-                    <option value="ats">ATS-first</option>
-                    <option value="modern">Modern professional</option>
-                    <option value="academic">Academic / research</option>
-                </select>
-            </div>
-
-            <div class="draft-toolbar-actions">
-                <button class="btn" type="button" id="newResume">+ New resume</button>
-                <button class="btn" type="button" id="renameResume">Rename</button>
-                <button class="btn" type="button" id="deleteResume">Delete resume</button>
-            </div>
+            <button class="sidebar-close" id="closeSidebar" type="button" aria-label="Close resume library">×</button>
         </div>
-    </section>
+
+        <a class="sidebar-back-link" href="{% url 'resume_builder:home' %}">
+            <span aria-hidden="true">←</span> Back to dashboard
+        </a>
+
+        <button class="btn btn-primary sidebar-create" type="button" id="newResume">
+            <span aria-hidden="true">＋</span> Create new resume
+        </button>
+
+        <section class="sidebar-section" aria-labelledby="sidebarResumeTitle">
+            <div class="sidebar-section-heading">
+                <h3 id="sidebarResumeTitle">Resumes & drafts</h3>
+                <span id="resumeCount" class="sidebar-count">0 items</span>
+            </div>
+            <div class="resume-library-list" id="resumeList" role="list" aria-label="Saved resumes and drafts"></div>
+            <!-- Compatibility select used by the existing resume-switching logic. -->
+            <select id="resumeSelect" aria-label="Select a saved resume" hidden></select>
+        </section>
+
+        <section class="sidebar-section" aria-labelledby="sidebarTemplatesTitle">
+            <div class="sidebar-section-heading">
+                <h3 id="sidebarTemplatesTitle">Resume templates</h3>
+            </div>
+            <div class="sidebar-template-list">
+                <button class="template-option is-selected" type="button" data-template-option="ats" aria-pressed="true">
+                    <span class="template-mini template-mini-ats" aria-hidden="true"><i></i><i></i><i></i></span>
+                    <span class="template-option-copy"><strong>ATS-first</strong><small>Simple and parsing-friendly</small></span>
+                    <span class="template-check" aria-hidden="true">✓</span>
+                </button>
+                <button class="template-option" type="button" data-template-option="modern" aria-pressed="false">
+                    <span class="template-mini template-mini-modern" aria-hidden="true"><i></i><i></i><i></i></span>
+                    <span class="template-option-copy"><strong>Modern professional</strong><small>Contemporary blue accent</small></span>
+                    <span class="template-check" aria-hidden="true">✓</span>
+                </button>
+                <button class="template-option" type="button" data-template-option="academic" aria-pressed="false">
+                    <span class="template-mini template-mini-academic" aria-hidden="true"><i></i><i></i><i></i></span>
+                    <span class="template-option-copy"><strong>Academic / research</strong><small>Formal research layout</small></span>
+                    <span class="template-check" aria-hidden="true">✓</span>
+                </button>
+            </div>
+            <!-- Compatibility select: existing template logic continues to use this value. -->
+            <select id="templateSelect" aria-label="Choose a resume template" hidden>
+                <option value="ats">ATS-first</option>
+                <option value="modern">Modern professional</option>
+                <option value="academic">Academic / research</option>
+            </select>
+        </section>
+
+        <section class="sidebar-section sidebar-management" aria-label="Manage current resume">
+            <div class="sidebar-section-heading"><h3>Current resume</h3></div>
+            <button class="btn btn-primary sidebar-save" type="button" id="saveResume">✓ Save resume</button>
+            <div class="sidebar-action-grid">
+                <button class="btn" type="button" id="renameResume">Rename</button>
+                <button class="btn btn-danger" type="button" id="deleteResume">Delete</button>
+            </div>
+        </section>
+
+        <details class="sidebar-backup">
+            <summary>Backup & transfer</summary>
+            <div class="sidebar-backup-actions">
+                <button class="btn" type="button" id="exportResume">Export current (.json)</button>
+                <button class="btn" type="button" id="exportAllResumes">Backup all resumes</button>
+                <button class="btn" type="button" id="importResumes">Import backup</button>
+                <input id="importResumeFile" type="file" accept=".json,application/json" hidden>
+            </div>
+        </details>
+
+        <div class="sidebar-storage-note">
+            <span class="storage-dot" aria-hidden="true"></span>
+            Autosaved in this browser. Export backups to transfer resumes to another device.
+        </div>
+    </aside>
+    <button id="sidebarBackdrop" class="sidebar-backdrop" type="button" aria-label="Close resume library" hidden></button>
 
     <main class="workspace">
         <section class="editor-panel">
@@ -1680,6 +1887,7 @@
 
                 document.getElementById("templateSelect").value = templateId;
                 document.getElementById("templateLabel").textContent = selected.label;
+                renderTemplateCards();
             }
 
             function setStatus(message) {
@@ -1990,7 +2198,9 @@
                     name: name.trim().slice(0, 60) || "My Resume",
                     data,
                     template: "ats",
-                    updatedAt: new Date().toISOString()
+                    updatedAt: new Date().toISOString(),
+                    isSaved: false,
+                    savedAt: null
                 };
             }
 
@@ -2020,6 +2230,93 @@
                 });
 
                 select.value = activeDraftId || "";
+                renderResumeLibrary();
+                renderTemplateCards();
+            }
+
+            function formatResumeDate(value) {
+                if (!value) return "";
+                const date = new Date(value);
+                if (Number.isNaN(date.getTime())) return "";
+                return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+            }
+
+            function renderResumeLibrary() {
+                const list = document.getElementById("resumeList");
+                const countNode = document.getElementById("resumeCount");
+                if (!list) return;
+
+                list.replaceChildren();
+
+                const savedCount = drafts.filter((draft) => draft.isSaved === true).length;
+                const draftCount = drafts.length - savedCount;
+
+                if (countNode) {
+                    countNode.textContent = `${drafts.length} total · ${savedCount} saved · ${draftCount} drafts`;
+                }
+
+                if (!drafts.length) {
+                    const empty = document.createElement("div");
+                    empty.className = "resume-library-empty";
+                    empty.textContent = "No resumes yet. Create one to get started.";
+                    list.appendChild(empty);
+                    return;
+                }
+
+                drafts.forEach((draft) => {
+                    const active = draft.id === activeDraftId;
+                    const item = document.createElement("button");
+                    item.type = "button";
+                    item.className = "resume-library-item" + (active ? " is-active" : "");
+                    item.dataset.resumeId = draft.id;
+                    item.setAttribute("role", "listitem");
+                    item.setAttribute("aria-current", active ? "page" : "false");
+                    item.setAttribute("aria-label", `Open ${draft.name}`);
+
+                    const icon = document.createElement("span");
+                    icon.className = "resume-library-icon";
+                    icon.setAttribute("aria-hidden", "true");
+                    icon.textContent = draft.isSaved ? "▤" : "▧";
+                    item.appendChild(icon);
+
+                    const copy = document.createElement("span");
+                    copy.className = "resume-library-copy";
+
+                    const title = document.createElement("strong");
+                    title.textContent = draft.name || "Untitled resume";
+                    copy.appendChild(title);
+
+                    const templateNames = {
+                        ats: "ATS-first",
+                        modern: "Modern professional",
+                        academic: "Academic / research"
+                    };
+                    const meta = document.createElement("small");
+                    const stateLabel = draft.isSaved ? "Saved resume" : "Draft · autosaved";
+                    const dateLabel = formatResumeDate(draft.updatedAt);
+                    meta.textContent = `${stateLabel} · ${templateNames[normalizeTemplate(draft.template)]}${dateLabel ? ` · ${dateLabel}` : ""}`;
+                    copy.appendChild(meta);
+                    item.appendChild(copy);
+
+                    if (active) {
+                        const mark = document.createElement("span");
+                        mark.className = "resume-library-active-mark";
+                        mark.setAttribute("aria-hidden", "true");
+                        mark.textContent = "✓";
+                        item.appendChild(mark);
+                    }
+
+                    list.appendChild(item);
+                });
+            }
+
+            function renderTemplateCards() {
+                const current = document.getElementById("templateSelect")?.value || "ats";
+                document.querySelectorAll("[data-template-option]").forEach((button) => {
+                    const selected = button.dataset.templateOption === current;
+                    button.classList.toggle("is-selected", selected);
+                    button.setAttribute("aria-pressed", String(selected));
+                });
             }
 
             function saveDraft(statusMessage = "Draft saved locally") {
@@ -2035,7 +2332,269 @@
                 );
                 activeDraft.updatedAt = new Date().toISOString();
 
-                return persistDrafts(statusMessage);
+                const saved = persistDrafts(statusMessage);
+                renderDraftSelect();
+                return saved;
+            }
+
+            function getActiveDraft() {
+                return drafts.find((draft) => draft.id === activeDraftId) || null;
+            }
+
+            function slugifyFileName(value) {
+                const slug = String(value || "resume")
+                    .normalize("NFKD")
+                    .replace(/[\u0300-\u036f]/g, "")
+                    .replace(/[^a-zA-Z0-9]+/g, "-")
+                    .replace(/^-+|-+$/g, "")
+                    .toLowerCase();
+                return (slug || "resume").slice(0, 60);
+            }
+
+            function downloadJsonFile(fileName, payload) {
+                try {
+                    const blob = new Blob(
+                        [JSON.stringify(payload, null, 2)],
+                        { type: "application/json;charset=utf-8" }
+                    );
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement("a");
+                    link.href = url;
+                    link.download = fileName;
+                    link.style.display = "none";
+                    document.body.appendChild(link);
+                    link.click();
+                    link.remove();
+                    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+                    return true;
+                } catch (_error) {
+                    window.alert("Unable to create the backup file in this browser.");
+                    return false;
+                }
+            }
+
+            function exportCurrentResume() {
+                if (!saveDraft("Resume saved on this device")) {
+                    window.alert("This browser could not save the resume. Try exporting it anyway after checking browser storage settings.");
+                }
+
+                const activeDraft = getActiveDraft();
+                if (!activeDraft) {
+                    window.alert("Select a resume before exporting.");
+                    return;
+                }
+
+                const payload = {
+                    app: "BxB AI Resume Builder",
+                    format: "bxb-resume-backup",
+                    version: 1,
+                    exportedAt: new Date().toISOString(),
+                    resume: {
+                        name: activeDraft.name,
+                        template: activeDraft.template,
+                        data: activeDraft.data,
+                        updatedAt: activeDraft.updatedAt,
+                        isSaved: activeDraft.isSaved === true,
+                        savedAt: activeDraft.savedAt || null
+                    }
+                };
+
+                const didDownload = downloadJsonFile(
+                    `bxb-${slugifyFileName(activeDraft.name)}.json`,
+                    payload
+                );
+                if (didDownload) setStatus("Resume saved and backup downloaded");
+            }
+
+            function exportAllResumes() {
+                if (!saveDraft("All resumes saved on this device")) {
+                    window.alert("Browser storage could not be updated. You can still download a backup of the resumes currently in memory.");
+                }
+
+                const payload = {
+                    app: "BxB AI Resume Builder",
+                    format: "bxb-resume-library",
+                    version: 1,
+                    exportedAt: new Date().toISOString(),
+                    activeResumeId: activeDraftId,
+                    drafts: drafts.map((draft) => ({
+                        name: draft.name,
+                        template: normalizeTemplate(draft.template),
+                        data: draft.data,
+                        updatedAt: draft.updatedAt,
+                        isSaved: draft.isSaved === true,
+                        savedAt: draft.savedAt || null
+                    }))
+                };
+
+                const didDownload = downloadJsonFile(
+                    `bxb-resume-library-${new Date().toISOString().slice(0, 10)}.json`,
+                    payload
+                );
+                if (didDownload) setStatus("Backup of all resumes downloaded");
+            }
+
+            function limitedString(value, maxLength = 5000) {
+                if (typeof value !== "string") return "";
+                return value.slice(0, maxLength);
+            }
+
+            function normalizeImportedData(rawData) {
+                if (!rawData || typeof rawData !== "object" || Array.isArray(rawData)) {
+                    throw new Error("The backup does not contain valid resume data.");
+                }
+
+                const data = {};
+                const fieldLimits = {
+                    name: 100,
+                    targetRole: 120,
+                    email: 254,
+                    phone: 35,
+                    location: 100,
+                    linkedin: 250,
+                    github: 250,
+                    summary: 1200,
+                    skills: 5000,
+                    certifications: 5000,
+                    achievements: 5000
+                };
+
+                Object.entries(fieldLimits).forEach(([key, maxLength]) => {
+                    data[key] = limitedString(rawData[key], maxLength);
+                });
+
+                const normalizeEntries = (entries, allowedFields, maxEntries = 50) => {
+                    if (entries === undefined || entries === null) return [];
+                    if (!Array.isArray(entries)) return [];
+
+                    return entries.slice(0, maxEntries).map((entry) => {
+                        const clean = {};
+                        const safeEntry = entry && typeof entry === "object" && !Array.isArray(entry)
+                            ? entry
+                            : {};
+
+                        allowedFields.forEach(([key, limit]) => {
+                            clean[key] = limitedString(safeEntry[key], limit);
+                        });
+                        return clean;
+                    });
+                };
+
+                data.education = normalizeEntries(rawData.education, [
+                    ["school", 180], ["degree", 160], ["years", 60], ["details", 300]
+                ]);
+                data.project = normalizeEntries(rawData.project, [
+                    ["name", 160], ["tech", 220], ["description", 1000], ["link", 300]
+                ]);
+                data.experience = normalizeEntries(rawData.experience, [
+                    ["role", 150], ["company", 180], ["dates", 80], ["description", 1000]
+                ]);
+
+                return data;
+            }
+
+            function normalizeImportedDraft(rawDraft, index = 0) {
+                if (!rawDraft || typeof rawDraft !== "object" || Array.isArray(rawDraft)) {
+                    throw new Error(`Resume ${index + 1} in the backup is invalid.`);
+                }
+
+                const rawName = typeof rawDraft.name === "string"
+                    ? rawDraft.name.trim()
+                    : `Imported Resume ${index + 1}`;
+                const name = (rawName || `Imported Resume ${index + 1}`).slice(0, 60);
+
+                return {
+                    id: makeDraftId(),
+                    name,
+                    data: normalizeImportedData(rawDraft.data),
+                    template: normalizeTemplate(rawDraft.template),
+                    updatedAt: typeof rawDraft.updatedAt === "string"
+                        ? rawDraft.updatedAt
+                        : new Date().toISOString(),
+                    isSaved: rawDraft.isSaved === true,
+                    savedAt: typeof rawDraft.savedAt === "string" ? rawDraft.savedAt : null
+                };
+            }
+
+            async function importBackupFile(event) {
+                const input = event.target;
+                const file = input.files && input.files[0];
+                if (!file) return;
+
+                try {
+                    if (file.size > 5 * 1024 * 1024) {
+                        throw new Error("The backup file is larger than 5 MB.");
+                    }
+
+                    const text = await file.text();
+                    let payload;
+                    try {
+                        payload = JSON.parse(text);
+                    } catch (_error) {
+                        throw new Error("This file is not valid JSON. Select a BxB resume backup (.json).");
+                    }
+
+                    if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+                        throw new Error("The selected backup has an invalid format.");
+                    }
+
+                    let importedDrafts = [];
+
+                    if (payload.format === "bxb-resume-backup" && payload.resume) {
+                        importedDrafts = [normalizeImportedDraft(payload.resume)];
+                    } else if (payload.format === "bxb-resume-library" && Array.isArray(payload.drafts)) {
+                        importedDrafts = payload.drafts.map((draft, index) => normalizeImportedDraft(draft, index));
+                    } else {
+                        throw new Error("Unsupported backup format. Use a JSON file exported by BxB Resume Builder.");
+                    }
+
+                    if (!importedDrafts.length) {
+                        throw new Error("No resumes were found in this backup.");
+                    }
+
+                    const availableSlots = Math.max(0, 20 - drafts.length);
+                    if (availableSlots === 0) {
+                        throw new Error("This browser already contains 20 resumes. Delete one before importing a backup.");
+                    }
+
+                    if (importedDrafts.length > availableSlots) {
+                        const proceed = window.confirm(
+                            `There is room for ${availableSlots} more resume(s). Import the first ${availableSlots} from this backup?`
+                        );
+                        if (!proceed) return;
+                        importedDrafts = importedDrafts.slice(0, availableSlots);
+                    }
+
+                    // Rename duplicates for clarity while keeping existing resumes untouched.
+                    const existingNames = new Set(drafts.map((draft) => draft.name.toLowerCase()));
+                    importedDrafts.forEach((draft, index) => {
+                        const baseName = draft.name.slice(0, 48);
+                        let candidate = baseName;
+                        let suffix = 2;
+                        while (existingNames.has(candidate.toLowerCase())) {
+                            const marker = ` (Imported ${suffix})`;
+                            candidate = `${baseName.slice(0, 60 - marker.length)}${marker}`;
+                            suffix += 1;
+                        }
+                        draft.name = candidate;
+                        existingNames.add(candidate.toLowerCase());
+                    });
+
+                    drafts.push(...importedDrafts);
+                    activeDraftId = importedDrafts[0].id;
+                    renderDraftSelect();
+                    loadActiveDraft();
+                    const saved = saveDraft(`Imported ${importedDrafts.length} resume(s)`);
+
+                    if (!saved) {
+                        window.alert("Resumes were imported into this page, but browser storage could not save them. Export a backup immediately or check storage settings.");
+                    }
+                } catch (error) {
+                    window.alert(error instanceof Error ? error.message : "Unable to import this backup.");
+                } finally {
+                    // Permit selecting the same file again after fixing an issue.
+                    input.value = "";
+                }
             }
 
             function loadDraftData(data = {}) {
@@ -2102,6 +2661,8 @@
 
                     drafts.forEach((draft) => {
                         draft.template = normalizeTemplate(draft.template);
+                        draft.isSaved = draft.isSaved === true;
+                        draft.savedAt = typeof draft.savedAt === "string" ? draft.savedAt : null;
                     });
 
                     activeDraftId = registry.activeDraftId;
@@ -2148,7 +2709,9 @@
                 if (!confirmed) return;
 
                 loadDraftData({});
-                saveDraft("Current resume cleared");
+                const activeDraft = getActiveDraft();
+                if (activeDraft) activeDraft.isSaved = false;
+                saveDraft("Current resume cleared · draft autosaved");
             }
 
             function newResume() {
@@ -2218,14 +2781,16 @@
             }
 
             function switchResume() {
-                // Save the current resume before loading the newly selected one.
-                saveDraft();
-
+                // Capture selection before autosave refreshes the hidden compatibility select.
                 const selectedId = document.getElementById("resumeSelect").value;
                 if (!drafts.some(draft => draft.id === selectedId)) return;
+                if (selectedId === activeDraftId) return;
 
+                saveDraft();
                 activeDraftId = selectedId;
                 loadActiveDraft();
+                persistDrafts("Opened: " + (getActiveDraft()?.name || "resume"));
+                closeSidebar();
             }
 
             function deleteResume() {
@@ -2292,8 +2857,10 @@
             });
 
             form.addEventListener("input", () => {
+                const activeDraft = getActiveDraft();
+                if (activeDraft) activeDraft.isSaved = false;
                 updatePreview();
-                saveDraft();
+                saveDraft("Draft autosaved");
             });
 
             document.getElementById("previewButton").addEventListener("click", () => {
@@ -2312,6 +2879,26 @@
             document.getElementById("clearDraft").addEventListener("click", clearDraft);
 
             document.getElementById("newResume").addEventListener("click", newResume);
+            document.getElementById("saveResume").addEventListener("click", () => {
+                const activeDraft = getActiveDraft();
+                if (!activeDraft) return;
+
+                activeDraft.isSaved = true;
+                activeDraft.savedAt = new Date().toISOString();
+                const saved = saveDraft("Resume saved on this device");
+
+                if (!saved) {
+                    activeDraft.isSaved = false;
+                    renderDraftSelect();
+                    window.alert("Could not save this resume in browser storage. Export a JSON backup to keep a copy.");
+                }
+            });
+            document.getElementById("exportResume").addEventListener("click", exportCurrentResume);
+            document.getElementById("exportAllResumes").addEventListener("click", exportAllResumes);
+            document.getElementById("importResumes").addEventListener("click", () => {
+                document.getElementById("importResumeFile").click();
+            });
+            document.getElementById("importResumeFile").addEventListener("change", importBackupFile);
             document.getElementById("renameResume").addEventListener("click", renameResume);
             document.getElementById("deleteResume").addEventListener("click", deleteResume);
             document.getElementById("resumeSelect").addEventListener("change", switchResume);
@@ -2320,9 +2907,56 @@
                 const selectedTemplate = normalizeTemplate(
                     document.getElementById("templateSelect").value
                 );
+                const activeDraft = getActiveDraft();
+                if (activeDraft) activeDraft.isSaved = false;
 
                 applyTemplate(selectedTemplate);
-                saveDraft("Template changed and saved");
+                saveDraft("Template changed · draft autosaved");
+                if (window.matchMedia("(max-width: 1100px)").matches) closeSidebar();
+            });
+
+            document.getElementById("resumeList").addEventListener("click", (event) => {
+                const item = event.target.closest("[data-resume-id]");
+                if (!item) return;
+                const select = document.getElementById("resumeSelect");
+                select.value = item.dataset.resumeId;
+                switchResume();
+            });
+
+            document.querySelectorAll("[data-template-option]").forEach((button) => {
+                button.addEventListener("click", () => {
+                    const select = document.getElementById("templateSelect");
+                    select.value = normalizeTemplate(button.dataset.templateOption);
+                    select.dispatchEvent(new Event("change", { bubbles: true }));
+                });
+            });
+
+            function openSidebar() {
+                const sidebar = document.getElementById("resumeSidebar");
+                const backdrop = document.getElementById("sidebarBackdrop");
+                const toggle = document.getElementById("openSidebar");
+                sidebar.classList.add("is-open");
+                backdrop.hidden = false;
+                document.body.classList.add("sidebar-open");
+                toggle?.setAttribute("aria-expanded", "true");
+            }
+
+            function closeSidebar() {
+                const sidebar = document.getElementById("resumeSidebar");
+                const backdrop = document.getElementById("sidebarBackdrop");
+                const toggle = document.getElementById("openSidebar");
+                if (!sidebar || !backdrop) return;
+                sidebar.classList.remove("is-open");
+                backdrop.hidden = true;
+                document.body.classList.remove("sidebar-open");
+                toggle?.setAttribute("aria-expanded", "false");
+            }
+
+            document.getElementById("openSidebar").addEventListener("click", openSidebar);
+            document.getElementById("closeSidebar").addEventListener("click", closeSidebar);
+            document.getElementById("sidebarBackdrop").addEventListener("click", closeSidebar);
+            document.addEventListener("keydown", (event) => {
+                if (event.key === "Escape") closeSidebar();
             });
 
             loadDraft();
