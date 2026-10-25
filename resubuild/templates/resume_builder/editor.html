@@ -1,4 +1,4 @@
-
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -797,6 +797,248 @@
                 margin-left: 17mm !important;
             }
         }
+
+        /* =========================================================
+           BxB RESUME INTELLIGENCE
+        ========================================================= */
+
+        .ri-panel {
+            margin: 24px 0;
+            padding: 24px;
+            border: 1px solid rgba(182, 167, 255, 0.24);
+            border-radius: 18px;
+            background: linear-gradient(
+                145deg,
+                rgba(182, 167, 255, 0.10),
+                rgba(17, 22, 37, 0.98) 60%
+            );
+        }
+
+        .ri-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .ri-eyebrow {
+            color: var(--accent);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .ri-header h2 {
+            margin: 5px 0;
+            font-family: "Manrope", sans-serif;
+            font-size: clamp(20px, 3vw, 26px);
+            line-height: 1.3;
+        }
+
+        .ri-header p,
+        .ri-description,
+        .ri-disclaimer {
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .ri-description {
+            margin: 8px 0 16px;
+        }
+
+        .ri-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .ri-textarea {
+            display: block;
+            width: 100%;
+            min-height: 190px;
+            padding: 14px;
+            resize: vertical;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            outline: none;
+            background: rgba(7, 10, 18, 0.72);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        .ri-textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(182, 167, 255, 0.10);
+        }
+
+        .ri-actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .ri-status {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .ri-disclaimer {
+            margin: 14px 0 0;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        .ri-results {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .ri-results-heading {
+            margin-bottom: 16px;
+        }
+
+        .ri-results-heading h3 {
+            margin: 0 0 5px;
+            font-family: "Manrope", sans-serif;
+            font-size: 19px;
+        }
+
+        .ri-results-heading p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .ri-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .ri-metric {
+            min-width: 0;
+            padding: 15px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.025);
+        }
+
+        .ri-metric span {
+            display: block;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .ri-metric strong {
+            display: block;
+            margin-top: 5px;
+            font-family: "Manrope", sans-serif;
+            font-size: 26px;
+            overflow-wrap: anywhere;
+        }
+
+        .ri-result-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .ri-result-group {
+            min-width: 0;
+            padding: 15px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: rgba(7, 10, 18, 0.36);
+        }
+
+        .ri-result-group h4 {
+            margin: 0 0 12px;
+            font-size: 13px;
+        }
+
+        .ri-result-group h4 span {
+            color: var(--muted);
+            font-weight: 400;
+        }
+
+        .ri-keyword-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .ri-keyword-list li {
+            max-width: 100%;
+            padding: 5px 9px;
+            overflow-wrap: anywhere;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.035);
+            font-size: 12px;
+        }
+
+        .ri-result-empty {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .ri-recommendations {
+            grid-column: 1 / -1;
+        }
+
+        .ri-recommendations .ri-keyword-list {
+            display: grid;
+            grid-template-columns: 1fr;
+        }
+
+        .ri-recommendations .ri-keyword-list li {
+            padding: 10px 12px;
+            line-height: 1.6;
+        }
+
+        .ri-footnote {
+            margin-top: 16px;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
+        @media (max-width: 800px) {
+            .ri-metrics {
+                grid-template-columns: 1fr;
+            }
+
+            .ri-result-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .ri-recommendations {
+                grid-column: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .ri-panel {
+                padding: 16px;
+            }
+
+            .ri-header {
+                display: block;
+            }
+        }
     </style>
 </head>
 
@@ -855,6 +1097,160 @@
                 information on a shared computer.
             </div>
 
+            <!-- CSRF token used by the Django analysis request -->
+            <form id="riCsrfForm" hidden>
+                {% csrf_token %}
+            </form>
+
+            <!-- BxB Resume Intelligence -->
+            <section
+                class="ri-panel"
+                id="resumeIntelligencePanel"
+                data-analysis-url="{% url 'resume_builder:analyze_resume_api' %}"
+                aria-labelledby="riTitle"
+            >
+                <div class="ri-header">
+                    <div>
+                        <span class="ri-eyebrow">BXB RESUME INTELLIGENCE</span>
+                        <h2 id="riTitle">Match your resume to the job.</h2>
+                        <p>
+                            Identify relevant keywords, find gaps and improve
+                            the evidence supporting your skills before applying.
+                        </p>
+                    </div>
+                </div>
+
+                <p class="ri-description">
+                    Paste the job description below. We'll compare it with your
+                    current resume and recommend areas to review.
+                </p>
+
+                <label class="ri-label" for="riJobDescription">
+                    Job description
+                </label>
+
+                <textarea
+                    id="riJobDescription"
+                    class="ri-textarea"
+                    maxlength="30000"
+                    placeholder="Paste the job title, responsibilities, required skills, preferred qualifications and other job requirements here..."
+                    aria-describedby="riJobDescriptionHint"
+                ></textarea>
+
+                <p class="ri-description" id="riJobDescriptionHint">
+                    Include the full job description for more useful keyword
+                    comparisons.
+                </p>
+
+                <div class="ri-actions">
+                    <button
+                        class="btn btn-primary"
+                        type="button"
+                        id="riAnalyzeButton"
+                    >
+                        Analyze job description
+                    </button>
+
+                    <span
+                        class="ri-status"
+                        id="riStatus"
+                        role="status"
+                        aria-live="polite"
+                    >
+                        Ready to analyze your current resume.
+                    </span>
+                </div>
+
+                <div class="ri-results" id="riResults" hidden>
+                    <div class="ri-results-heading">
+                        <h3>Your keyword analysis</h3>
+                        <p>Review each category before editing your resume.</p>
+                    </div>
+
+                    <div class="ri-metrics">
+                        <div class="ri-metric">
+                            <span>Keyword coverage</span>
+                            <strong id="riCoverage">—</strong>
+                        </div>
+
+                        <div class="ri-metric">
+                            <span>Keywords present in resume</span>
+                            <strong id="riPresence">—</strong>
+                        </div>
+
+                        <div class="ri-metric">
+                            <span>Recognized job keywords</span>
+                            <strong id="riTotal">—</strong>
+                        </div>
+                    </div>
+
+                    <div class="ri-result-grid">
+                        <section class="ri-result-group">
+                            <h4>
+                                Matched with evidence
+                                <span id="riMatchedCount">(0)</span>
+                            </h4>
+
+                            <ul class="ri-keyword-list" id="riMatched"></ul>
+
+                            <p class="ri-result-empty" id="riMatchedEmpty">
+                                Matched keywords will appear here.
+                            </p>
+                        </section>
+
+                        <section class="ri-result-group">
+                            <h4>
+                                Needs stronger evidence
+                                <span id="riEvidenceCount">(0)</span>
+                            </h4>
+
+                            <ul class="ri-keyword-list" id="riEvidence"></ul>
+
+                            <p class="ri-result-empty" id="riEvidenceEmpty">
+                                Skills needing stronger evidence will appear here.
+                            </p>
+                        </section>
+
+                        <section class="ri-result-group">
+                            <h4>
+                                Missing keywords
+                                <span id="riMissingCount">(0)</span>
+                            </h4>
+
+                            <ul class="ri-keyword-list" id="riMissing"></ul>
+
+                            <p class="ri-result-empty" id="riMissingEmpty">
+                                Missing keywords will appear here.
+                            </p>
+                        </section>
+
+                        <section class="ri-result-group ri-recommendations">
+                            <h4>Recommended next steps</h4>
+
+                            <ul
+                                class="ri-keyword-list"
+                                id="riRecommendations"
+                            ></ul>
+
+                            <p
+                                class="ri-result-empty"
+                                id="riRecommendationsEmpty"
+                            >
+                                Recommendations will appear after analysis.
+                            </p>
+                        </section>
+                    </div>
+
+                    <p class="ri-footnote" id="riExplanation"></p>
+                </div>
+
+                <p class="ri-disclaimer">
+                    This tool checks recognized keywords; it does not reproduce
+                    every employer's ATS or predict shortlisting. Only add skills
+                    you genuinely possess and can demonstrate.
+                </p>
+            </section>
+
             <form id="resumeForm" autocomplete="on">
                 <!-- Personal information -->
                 <section class="form-section">
@@ -869,44 +1265,74 @@
                     <div class="field-grid">
                         <div class="field field-full">
                             <label for="name">Full name *</label>
-                            <input id="name" data-key="name" maxlength="100"
-                                   placeholder="e.g. Devansh Kumar">
+                            <input
+                                id="name"
+                                data-key="name"
+                                maxlength="100"
+                                placeholder="e.g. Devansh Kumar"
+                            >
                         </div>
 
                         <div class="field field-full">
                             <label for="targetRole">Professional headline</label>
-                            <input id="targetRole" data-key="targetRole" maxlength="120"
-                                   placeholder="e.g. Computer Science Student | Aspiring Developer">
+                            <input
+                                id="targetRole"
+                                data-key="targetRole"
+                                maxlength="120"
+                                placeholder="e.g. Computer Science Student | Aspiring Developer"
+                            >
                         </div>
 
                         <div class="field">
                             <label for="email">Email</label>
-                            <input id="email" data-key="email" type="email" maxlength="254"
-                                   placeholder="you@example.com">
+                            <input
+                                id="email"
+                                data-key="email"
+                                type="email"
+                                maxlength="254"
+                                placeholder="you@example.com"
+                            >
                         </div>
 
                         <div class="field">
                             <label for="phone">Phone</label>
-                            <input id="phone" data-key="phone" type="tel" maxlength="35"
-                                   placeholder="+91 98765 43210">
+                            <input
+                                id="phone"
+                                data-key="phone"
+                                type="tel"
+                                maxlength="35"
+                                placeholder="+91 98765 43210"
+                            >
                         </div>
 
                         <div class="field">
                             <label for="location">City / Location</label>
-                            <input id="location" data-key="location" maxlength="100"
-                                   placeholder="e.g. Lucknow, India">
+                            <input
+                                id="location"
+                                data-key="location"
+                                maxlength="100"
+                                placeholder="e.g. Lucknow, India"
+                            >
                         </div>
 
                         <div class="field">
                             <label for="linkedin">LinkedIn URL</label>
-                            <input id="linkedin" data-key="linkedin" maxlength="250"
-                                   placeholder="linkedin.com/in/yourprofile">
+                            <input
+                                id="linkedin"
+                                data-key="linkedin"
+                                maxlength="250"
+                                placeholder="linkedin.com/in/yourprofile"
+                            >
                         </div>
 
                         <div class="field field-full">
                             <label for="github">GitHub / Portfolio URL</label>
-                            <input id="github" data-key="github" maxlength="250"
-                                   placeholder="github.com/yourusername">
+                            <input
+                                id="github"
+                                data-key="github"
+                                maxlength="250"
+                                placeholder="github.com/yourusername"
+                            >
                         </div>
                     </div>
                 </section>
@@ -923,10 +1349,16 @@
 
                     <div class="field">
                         <label for="summary">About you</label>
-                        <textarea id="summary" data-key="summary" maxlength="1200"
-                                  placeholder="Describe your education, interests, strongest skills, and the kind of opportunity you are seeking."></textarea>
+                        <textarea
+                            id="summary"
+                            data-key="summary"
+                            maxlength="1200"
+                            placeholder="Describe your education, interests, strongest skills, and the kind of opportunity you are seeking."
+                        ></textarea>
+
                         <div class="field-hint">
-                            Tip: focus on your real skills, projects, interests and goals.
+                            Tip: focus on your real skills, projects, interests
+                            and goals.
                         </div>
                     </div>
                 </section>
@@ -942,7 +1374,12 @@
                     </div>
 
                     <div class="repeat-list" id="educationList"></div>
-                    <button class="btn add-entry" type="button" data-add="education">
+
+                    <button
+                        class="btn add-entry"
+                        type="button"
+                        data-add="education"
+                    >
                         + Add education
                     </button>
                 </section>
@@ -959,10 +1396,15 @@
 
                     <div class="field">
                         <label for="skills">Your skills</label>
-                        <textarea id="skills" data-key="skills"
-                                  placeholder="Python, C++, SQL, Django, Git, Communication"></textarea>
+                        <textarea
+                            id="skills"
+                            data-key="skills"
+                            placeholder="Python, C++, SQL, Django, Git, Communication"
+                        ></textarea>
+
                         <div class="field-hint">
-                            Separate skills with commas or put each skill on a new line.
+                            Separate skills with commas or put each skill on a
+                            new line.
                         </div>
                     </div>
                 </section>
@@ -978,7 +1420,12 @@
                     </div>
 
                     <div class="repeat-list" id="projectList"></div>
-                    <button class="btn add-entry" type="button" data-add="project">
+
+                    <button
+                        class="btn add-entry"
+                        type="button"
+                        data-add="project"
+                    >
                         + Add project
                     </button>
                 </section>
@@ -994,11 +1441,18 @@
                     </div>
 
                     <div class="repeat-list" id="experienceList"></div>
-                    <button class="btn add-entry" type="button" data-add="experience">
+
+                    <button
+                        class="btn add-entry"
+                        type="button"
+                        data-add="experience"
+                    >
                         + Add experience
                     </button>
+
                     <p class="field-hint" style="margin-top:12px">
-                        No work experience yet? Leave this section blank and focus on projects.
+                        No work experience yet? Leave this section blank and
+                        focus on projects.
                     </p>
                 </section>
 
@@ -1014,8 +1468,12 @@
 
                     <div class="field">
                         <label for="certifications">Certifications</label>
-                        <textarea id="certifications" data-key="certifications"
-                                  placeholder="Python certification — Provider, Year&#10;Machine Learning course — Provider, Year"></textarea>
+                        <textarea
+                            id="certifications"
+                            data-key="certifications"
+                            placeholder="Python certification — Provider, Year&#10;Machine Learning course — Provider, Year"
+                        ></textarea>
+
                         <div class="field-hint">Enter one item per line.</div>
                     </div>
                 </section>
@@ -1032,17 +1490,32 @@
 
                     <div class="field">
                         <label for="achievements">Achievements</label>
-                        <textarea id="achievements" data-key="achievements"
-                                  placeholder="Participated in a college hackathon&#10;Led a student technical project"></textarea>
-                        <div class="field-hint">Only include genuine accomplishments.</div>
+                        <textarea
+                            id="achievements"
+                            data-key="achievements"
+                            placeholder="Participated in a college hackathon&#10;Led a student technical project"
+                        ></textarea>
+
+                        <div class="field-hint">
+                            Only include genuine accomplishments.
+                        </div>
                     </div>
                 </section>
 
                 <div class="form-footer">
-                    <button class="btn btn-primary" type="button" id="previewButton">
+                    <button
+                        class="btn btn-primary"
+                        type="button"
+                        id="previewButton"
+                    >
                         Update resume preview
                     </button>
-                    <button class="btn" type="button" id="printButton">
+
+                    <button
+                        class="btn"
+                        type="button"
+                        id="printButton"
+                    >
                         Print / Save PDF
                     </button>
                 </div>
@@ -1121,26 +1594,42 @@
                 <span>Education entry</span>
                 <button type="button" class="remove-entry">Remove</button>
             </div>
+
             <div class="field-grid">
                 <div class="field field-full">
                     <label>Institution / University</label>
-                    <input data-field="school" maxlength="180"
-                           placeholder="University or college name">
+                    <input
+                        data-field="school"
+                        maxlength="180"
+                        placeholder="University or college name"
+                    >
                 </div>
+
                 <div class="field">
                     <label>Degree / Qualification</label>
-                    <input data-field="degree" maxlength="160"
-                           placeholder="e.g. B.Tech Computer Science">
+                    <input
+                        data-field="degree"
+                        maxlength="160"
+                        placeholder="e.g. B.Tech Computer Science"
+                    >
                 </div>
+
                 <div class="field">
                     <label>Years</label>
-                    <input data-field="years" maxlength="60"
-                           placeholder="2024 – 2028">
+                    <input
+                        data-field="years"
+                        maxlength="60"
+                        placeholder="2024 – 2028"
+                    >
                 </div>
+
                 <div class="field field-full">
                     <label>Additional details <span class="optional">(optional)</span></label>
-                    <input data-field="details" maxlength="300"
-                           placeholder="Relevant coursework, grades or academic distinctions">
+                    <input
+                        data-field="details"
+                        maxlength="300"
+                        placeholder="Relevant coursework, grades or academic distinctions"
+                    >
                 </div>
             </div>
         </div>
@@ -1152,26 +1641,42 @@
                 <span>Project entry</span>
                 <button type="button" class="remove-entry">Remove</button>
             </div>
+
             <div class="field-grid">
                 <div class="field field-full">
                     <label>Project name</label>
-                    <input data-field="name" maxlength="160"
-                           placeholder="Your project name">
+                    <input
+                        data-field="name"
+                        maxlength="160"
+                        placeholder="Your project name"
+                    >
                 </div>
+
                 <div class="field field-full">
                     <label>Technologies / Tools</label>
-                    <input data-field="tech" maxlength="220"
-                           placeholder="Python, Django, SQL">
+                    <input
+                        data-field="tech"
+                        maxlength="220"
+                        placeholder="Python, Django, SQL"
+                    >
                 </div>
+
                 <div class="field field-full">
                     <label>Description</label>
-                    <textarea data-field="description" maxlength="1000"
-                              placeholder="What did you build? What problem does it solve? What was your contribution?"></textarea>
+                    <textarea
+                        data-field="description"
+                        maxlength="1000"
+                        placeholder="What did you build? What problem does it solve? What was your contribution?"
+                    ></textarea>
                 </div>
+
                 <div class="field field-full">
                     <label>Project link <span class="optional">(optional)</span></label>
-                    <input data-field="link" maxlength="300"
-                           placeholder="GitHub or project URL">
+                    <input
+                        data-field="link"
+                        maxlength="300"
+                        placeholder="GitHub or project URL"
+                    >
                 </div>
             </div>
         </div>
@@ -1183,26 +1688,42 @@
                 <span>Experience entry</span>
                 <button type="button" class="remove-entry">Remove</button>
             </div>
+
             <div class="field-grid">
                 <div class="field">
                     <label>Role / Position</label>
-                    <input data-field="role" maxlength="150"
-                           placeholder="e.g. Software Intern">
+                    <input
+                        data-field="role"
+                        maxlength="150"
+                        placeholder="e.g. Software Intern"
+                    >
                 </div>
+
                 <div class="field">
                     <label>Company / Organization</label>
-                    <input data-field="company" maxlength="180"
-                           placeholder="Organization name">
+                    <input
+                        data-field="company"
+                        maxlength="180"
+                        placeholder="Organization name"
+                    >
                 </div>
+
                 <div class="field field-full">
                     <label>Dates</label>
-                    <input data-field="dates" maxlength="80"
-                           placeholder="Jun 2026 – Aug 2026">
+                    <input
+                        data-field="dates"
+                        maxlength="80"
+                        placeholder="Jun 2026 – Aug 2026"
+                    >
                 </div>
+
                 <div class="field field-full">
                     <label>Responsibilities / Contributions</label>
-                    <textarea data-field="description" maxlength="1000"
-                              placeholder="Describe your actual contributions and relevant outcomes."></textarea>
+                    <textarea
+                        data-field="description"
+                        maxlength="1000"
+                        placeholder="Describe your actual contributions and relevant outcomes."
+                    ></textarea>
                 </div>
             </div>
         </div>
@@ -1267,6 +1788,7 @@
                     "template-modern",
                     "template-academic"
                 );
+
                 paper.classList.add(selected.className);
 
                 document.getElementById("templateSelect").value = templateId;
@@ -1339,6 +1861,26 @@
 
                 return data;
             }
+
+            /*
+             * Public interface for Resume Intelligence.
+             * Contact details are intentionally excluded.
+             */
+            window.BxBResumeBuilder = window.BxBResumeBuilder || {};
+
+            window.BxBResumeBuilder.getResumeDataForAnalysis = function () {
+                const data = collectDraft();
+
+                return {
+                    summary: data.summary || "",
+                    skills: data.skills || "",
+                    education: data.education || [],
+                    project: data.project || [],
+                    experience: data.experience || [],
+                    certifications: data.certifications || "",
+                    achievements: data.achievements || ""
+                };
+            };
 
             function hasAnyValue(object) {
                 if (!object || typeof object !== "object") return false;
@@ -1903,5 +2445,7 @@
             loadDraft();
         })();
     </script>
+
+    <script src="{% static 'resume_builder/js/ats_analyzer.js' %}"></script>
 </body>
 </html>
