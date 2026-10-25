@@ -1,433 +1,379 @@
 
-/*
- * ============================================================
- * BxB Resume Intelligence — Frontend Connector
- * Version: 1.0.0
- *
- * Responsibilities:
- * 1. Read the current resume from the existing editor.
- * 2. Send the job description and resume to Django.
- * 3. Include the Django CSRF token.
- * 4. Render keyword analysis and recommendations safely.
- *
- * Core analysis is performed by Python, not JavaScript.
- * ============================================================
- */
 
-(function () {
+(() => {
     "use strict";
 
-    document.addEventListener("DOMContentLoaded", initializeAnalyzer);
+    const panel = document.getElementById("resumeIntelligencePanel");
+    if (!panel) return;
 
-    function initializeAnalyzer() {
-        const panel = document.getElementById("resumeIntelligencePanel");
+    const get = (id) => document.getElementById(id);
+    const button = get("riAnalyzeButton");
+    const jobDescriptionField = get("riJobDescription");
+    const statusNode = get("riStatus");
+    const resultsNode = get("riResults");
 
-        if (!panel) {
-            console.error(
-                "BxB Resume Intelligence: analysis panel was not found."
-            );
-            return;
+    if (!button || !jobDescriptionField || !statusNode || !resultsNode) return;
+
+    const CATEGORY_COLORS = {
+        "Bad": "#f87171",
+        "Moderate": "#fb923c",
+        "Needs a Little Improvement": "#facc15",
+        "Good": "#60a5fa",
+        "Strong": "#34d399",
+        "Great": "#2dd4bf",
+        "Top Level": "#b6a7ff",
+        "Unavailable": "#94a3b8",
+    };
+
+    function setStatus(message, isError = false) {
+        statusNode.textContent = message;
+        statusNode.setAttribute("aria-live", isError ? "assertive" : "polite");
+        statusNode.style.color = isError ? "#f87171" : "";
+    }
+
+    function setText(id, value, fallback = "") {
+        const node = get(id);
+        if (node) {
+            node.textContent =
+                value === undefined || value === null || value === ""
+                    ? fallback
+                    : String(value);
         }
+        return node;
+    }
 
-        const analyzeButton = document.getElementById("riAnalyzeButton");
-        const jobDescriptionInput = document.getElementById("riJobDescription");
-        const statusElement = document.getElementById("riStatus");
-        const resultsElement = document.getElementById("riResults");
+    function setEmptyState(listId, emptyId, hasItems) {
+        const list = get(listId);
+        const empty = get(emptyId);
 
-        if (
-            !analyzeButton ||
-            !jobDescriptionInput ||
-            !statusElement ||
-            !resultsElement
-        ) {
-            console.error(
-                "BxB Resume Intelligence: required interface elements are missing."
-            );
-            return;
-        }
+        if (list) list.hidden = !hasItems;
+        if (empty) empty.hidden = hasItems;
+    }
 
-        analyzeButton.addEventListener("click", analyzeCurrentResume);
+    function clearList(id) {
+        const list = get(id);
+        if (list) list.replaceChildren();
+        return list;
+    }
 
-        // Ctrl+Enter / Cmd+Enter runs the analysis when the job description
-        // textarea is focused.
-        jobDescriptionInput.addEventListener("keydown", function (event) {
-            if (
-                event.key === "Enter" &&
-                (event.ctrlKey || event.metaKey)
-            ) {
-                event.preventDefault();
-                analyzeCurrentResume();
-            }
-        });
+    function renderKeywordList(listId, emptyId, items) {
+        const list = clearList(listId);
+        const validItems = Array.isArray(items) ? items : [];
 
-        async function analyzeCurrentResume() {
-            const jobDescription = jobDescriptionInput.value.trim();
+        if (list) {
+            validItems.forEach((item) => {
+                const term = typeof item === "string" ? item : item?.term;
+                if (!term) return;
 
-            if (!jobDescription) {
-                showStatus(
-                    "Paste a job description before running the analysis."
-                );
-                jobDescriptionInput.focus();
-                return;
-            }
-
-            if (jobDescription.length > 30000) {
-                showStatus(
-                    "The job description is too long. Maximum: 30,000 characters."
-                );
-                return;
-            }
-
-            if (
-                !window.BxBResumeBuilder ||
-                typeof window.BxBResumeBuilder.getResumeDataForAnalysis !== "function"
-            ) {
-                showStatus(
-                    "The resume editor is not ready. Refresh the page and try again."
-                );
-                console.error(
-                    "BxB Resume Intelligence: resume data interface is unavailable."
-                );
-                return;
-            }
-
-            let resumeData;
-
-            try {
-                resumeData =
-                    window.BxBResumeBuilder.getResumeDataForAnalysis();
-            } catch (error) {
-                console.error("Unable to read resume data:", error);
-                showStatus(
-                    "Could not read the current resume. Check the editor and try again."
-                );
-                return;
-            }
-
-            if (!resumeData || typeof resumeData !== "object") {
-                showStatus("Resume data is unavailable. Complete your resume first.");
-                return;
-            }
-
-            const analysisUrl = panel.dataset.analysisUrl;
-
-            if (!analysisUrl) {
-                showStatus(
-                    "The analysis endpoint is not configured. Check editor.html."
-                );
-                return;
-            }
-
-            const csrfToken = getCsrfToken();
-
-            if (!csrfToken) {
-                showStatus(
-                    "Security token is missing. Refresh the page and try again."
-                );
-                console.error(
-                    "BxB Resume Intelligence: Django CSRF token was not found."
-                );
-                return;
-            }
-
-            setLoading(true);
-            showStatus("Analyzing your resume against the job description...");
-            resultsElement.hidden = true;
-
-            try {
-                const response = await fetch(analysisUrl, {
-                    method: "POST",
-                    credentials: "same-origin",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Accept": "application/json",
-                        "X-CSRFToken": csrfToken,
-                        "X-Requested-With": "XMLHttpRequest"
-                    },
-                    body: JSON.stringify({
-                        job_description: jobDescription,
-                        resume: resumeData
-                    })
-                });
-
-                const result = await parseJsonResponse(response);
-
-                if (!response.ok) {
-                    throw new Error(
-                        result.message ||
-                        "The analysis request failed. Please try again."
-                    );
-                }
-
-                if (result.status === "error") {
-                    throw new Error(
-                        result.message || "Unable to analyze this resume."
-                    );
-                }
-
-                if (result.status === "no_keywords") {
-                    renderResults(result);
-                    showStatus(
-                        result.message ||
-                        "No supported keywords were found in this job description."
-                    );
-                    return;
-                }
-
-                if (result.status !== "ok") {
-                    throw new Error(
-                        result.message || "The server returned an unexpected response."
-                    );
-                }
-
-                renderResults(result);
-
-                showStatus(
-                    "Analysis complete. Review the results before editing your resume."
-                );
-
-            } catch (error) {
-                console.error("BxB Resume Intelligence error:", error);
-
-                showStatus(
-                    error.message ||
-                    "Something went wrong during analysis. Please try again."
-                );
-
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        function getCsrfToken() {
-            const csrfInput = document.querySelector(
-                '#riCsrfForm input[name="csrfmiddlewaretoken"]'
-            );
-
-            if (csrfInput && csrfInput.value) {
-                return csrfInput.value;
-            }
-
-            // Fallback for pages where a CSRF form input is not available.
-            const cookie = document.cookie
-                .split("; ")
-                .find(item => item.startsWith("csrftoken="));
-
-            return cookie
-                ? decodeURIComponent(cookie.substring("csrftoken=".length))
-                : "";
-        }
-
-        async function parseJsonResponse(response) {
-            const contentType = response.headers.get("content-type") || "";
-
-            if (!contentType.toLowerCase().includes("application/json")) {
-                if (response.status === 403) {
-                    throw new Error(
-                        "Django rejected the request. Refresh the page and check CSRF configuration."
-                    );
-                }
-
-                if (response.status === 404) {
-                    throw new Error(
-                        "Analysis endpoint not found. Check resume_builder/urls.py."
-                    );
-                }
-
-                throw new Error(
-                    "The server returned an unexpected response. Check the Django terminal."
-                );
-            }
-
-            try {
-                return await response.json();
-            } catch (error) {
-                throw new Error("The server returned invalid JSON.");
-            }
-        }
-
-        function renderResults(result) {
-            const matched = Array.isArray(result.matched)
-                ? result.matched
-                : [];
-
-            const needsEvidence = Array.isArray(result.needs_evidence)
-                ? result.needs_evidence
-                : [];
-
-            const missing = Array.isArray(result.missing)
-                ? result.missing
-                : [];
-
-            const recommendations = Array.isArray(result.recommendations)
-                ? result.recommendations
-                : [];
-
-            setText(
-                "riCoverage",
-                formatPercent(result.keyword_coverage_percent)
-            );
-
-            setText(
-                "riPresence",
-                formatPercent(result.resume_keyword_presence_percent)
-            );
-
-            setText(
-                "riTotal",
-                formatNumber(result.total_keywords)
-            );
-
-            setText("riMatchedCount", `(${matched.length})`);
-            setText("riEvidenceCount", `(${needsEvidence.length})`);
-            setText("riMissingCount", `(${missing.length})`);
-
-            renderKeywordList(
-                "riMatched",
-                "riMatchedEmpty",
-                matched,
-                "No keywords matched with substantive resume evidence."
-            );
-
-            renderKeywordList(
-                "riEvidence",
-                "riEvidenceEmpty",
-                needsEvidence,
-                "No keywords currently need stronger evidence."
-            );
-
-            renderKeywordList(
-                "riMissing",
-                "riMissingEmpty",
-                missing,
-                "No recognized job-description keywords are missing."
-            );
-
-            renderRecommendations(recommendations);
-
-            setText(
-                "riExplanation",
-                result.explanation ||
-                "Keyword coverage is a comparison against the analyzer's supported vocabulary, not a prediction of ATS ranking or shortlisting."
-            );
-
-            document.getElementById("riResults").hidden = false;
-        }
-
-        function renderKeywordList(listId, emptyId, items, emptyMessage) {
-            const list = document.getElementById(listId);
-            const emptyMessageElement = document.getElementById(emptyId);
-
-            if (!list || !emptyMessageElement) return;
-
-            list.replaceChildren();
-
-            items.forEach(function (item) {
-                const label = typeof item === "string"
-                    ? item
-                    : item && typeof item.term === "string"
-                        ? item.term
-                        : "";
-
-                if (!label) return;
-
-                const listItem = document.createElement("li");
-
-                // textContent prevents job descriptions or keywords from
-                // injecting HTML into the page.
-                listItem.textContent = label;
-                list.appendChild(listItem);
+                const li = document.createElement("li");
+                li.textContent = term;
+                list.appendChild(li);
             });
-
-            const hasItems = list.children.length > 0;
-
-            emptyMessageElement.textContent = emptyMessage;
-            emptyMessageElement.hidden = hasItems;
-            list.hidden = !hasItems;
         }
 
-        function renderRecommendations(recommendations) {
-            const list = document.getElementById("riRecommendations");
-            const emptyMessage = document.getElementById(
-                "riRecommendationsEmpty"
-            );
+        const hasItems = Boolean(list && list.children.length);
+        setEmptyState(listId, emptyId, hasItems);
+    }
 
-            if (!list || !emptyMessage) return;
+    function renderRecommendations(items) {
+        const list = clearList("riRecommendations");
+        const validItems = Array.isArray(items) ? items : [];
 
-            list.replaceChildren();
+        if (list) {
+            validItems.forEach((item) => {
+                if (!item || (!item.keyword && !item.message)) return;
 
-            recommendations.forEach(function (recommendation) {
-                if (
-                    !recommendation ||
-                    typeof recommendation.message !== "string"
-                ) {
-                    return;
+                const li = document.createElement("li");
+                const heading = document.createElement("strong");
+                heading.textContent = item.keyword || "Recommendation";
+                li.appendChild(heading);
+
+                if (item.message) {
+                    const message = document.createElement("span");
+                    message.textContent = ` — ${item.message}`;
+                    li.appendChild(message);
                 }
 
-                const item = document.createElement("li");
-                const title = document.createElement("strong");
-                const message = document.createElement("span");
-
-                title.textContent = recommendation.keyword
-                    ? recommendation.keyword + ": "
-                    : "";
-
-                message.textContent = recommendation.message;
-
-                item.appendChild(title);
-                item.appendChild(message);
-                list.appendChild(item);
+                list.appendChild(li);
             });
-
-            const hasItems = list.children.length > 0;
-
-            emptyMessage.textContent =
-                "No additional recommendations are needed for the recognized keywords.";
-
-            emptyMessage.hidden = hasItems;
-            list.hidden = !hasItems;
         }
 
-        function formatPercent(value) {
-            const number = Number(value);
+        const hasItems = Boolean(list && list.children.length);
+        setEmptyState("riRecommendations", "riRecommendationsEmpty", hasItems);
+    }
 
-            if (!Number.isFinite(number)) {
-                return "—";
-            }
+    function renderPriorityImprovements(items) {
+        const container = clearList("riPriorityImprovements");
+        const validItems = Array.isArray(items) ? items : [];
 
-            return `${Math.max(0, Math.min(100, number))}%`;
+        if (container) {
+            validItems.forEach((item, index) => {
+                if (!item) return;
+
+                const card = document.createElement("article");
+                card.className = "ri-priority-card";
+
+                const eyebrow = document.createElement("div");
+                eyebrow.className = "ri-priority-number";
+
+                const priority = Number.isFinite(Number(item.priority))
+                    ? Number(item.priority)
+                    : index + 1;
+
+                eyebrow.textContent = `Priority ${priority}`;
+                card.appendChild(eyebrow);
+
+                const heading = document.createElement("h5");
+                heading.textContent = item.title || "Recommended improvement";
+                card.appendChild(heading);
+
+                const message = document.createElement("p");
+                message.textContent =
+                    item.message || "Review this area against the job description.";
+                card.appendChild(message);
+
+                if (Array.isArray(item.keywords) && item.keywords.length) {
+                    const keywords = document.createElement("div");
+                    keywords.className = "ri-priority-keywords";
+
+                    item.keywords.forEach((keyword) => {
+                        if (!keyword) return;
+
+                        const tag = document.createElement("span");
+                        tag.textContent = keyword;
+                        keywords.appendChild(tag);
+                    });
+
+                    if (keywords.children.length) {
+                        card.appendChild(keywords);
+                    }
+                }
+
+                container.appendChild(card);
+            });
         }
 
-        function formatNumber(value) {
-            const number = Number(value);
+        const hasItems = Boolean(container && container.children.length);
+        const empty = get("riPriorityEmpty");
 
-            return Number.isFinite(number) && number >= 0
-                ? String(Math.floor(number))
-                : "0";
+        if (empty) empty.hidden = hasItems;
+        if (container) container.hidden = !hasItems;
+    }
+
+    function renderScore(data) {
+        const rawScore = data.ats_score;
+        const hasScore =
+            typeof rawScore === "number" && Number.isFinite(rawScore);
+
+        const score = hasScore
+            ? Math.max(0, Math.min(100, Math.round(rawScore)))
+            : null;
+
+        const category = hasScore
+            ? (data.score_category || "Unavailable")
+            : "Unavailable";
+
+        const color = CATEGORY_COLORS[category] || CATEGORY_COLORS.Unavailable;
+        const gauge = get("riScoreGauge");
+
+        setText("riScoreValue", score === null ? "—" : score);
+        setText("riScoreCategory", category, "Unavailable");
+
+        setText(
+            "riScoreTitle",
+            score === null
+                ? "A score could not be calculated"
+                : `Your resume scored ${score} out of 100`,
+        );
+
+        setText(
+            "riScoreDescription",
+            data.score_description ||
+                data.message ||
+                "No additional score explanation was provided.",
+        );
+
+        setText(
+            "riScoreMethod",
+            data.score_method ||
+                "This is an estimated keyword-based compatibility indicator, not a score from an employer's ATS.",
+        );
+
+        const categoryNode = get("riScoreCategory");
+
+        if (categoryNode) {
+            categoryNode.style.color = color;
+            categoryNode.style.borderColor = color;
+            categoryNode.style.backgroundColor = `${color}14`;
         }
 
-        function setText(id, value) {
-            const element = document.getElementById(id);
+        if (gauge) {
+            gauge.style.background = score === null
+                ? "conic-gradient(#64748b 0%, rgba(255,255,255,.10) 0)"
+                : `conic-gradient(${color} ${score}%, rgba(255,255,255,.10) ${score}% 100%)`;
 
-            if (element) {
-                element.textContent = value;
-            }
-        }
-
-        function showStatus(message) {
-            statusElement.textContent = message;
-        }
-
-        function setLoading(isLoading) {
-            analyzeButton.disabled = isLoading;
-            analyzeButton.setAttribute(
-                "aria-busy",
-                String(isLoading)
+            gauge.setAttribute(
+                "aria-label",
+                score === null
+                    ? "Estimated ATS compatibility score unavailable"
+                    : `Estimated ATS compatibility score: ${score} out of 100, category ${category}`,
             );
-
-            analyzeButton.textContent = isLoading
-                ? "Analyzing..."
-                : "Analyze job description";
         }
     }
+
+    function renderAnalysis(data) {
+        resultsNode.hidden = false;
+        renderScore(data);
+
+        setText("riCoverage", `${Number(data.keyword_coverage_percent ?? 0)}%`);
+        setText("riPresence", `${Number(data.resume_keyword_presence_percent ?? 0)}%`);
+        setText("riTotal", data.total_keywords ?? 0);
+
+        const counts = data.counts || {};
+        const matched = Array.isArray(data.matched) ? data.matched : [];
+        const needsEvidence = Array.isArray(data.needs_evidence)
+            ? data.needs_evidence
+            : [];
+        const missing = Array.isArray(data.missing) ? data.missing : [];
+
+        setText("riMatchedCount", `(${counts.matched ?? matched.length})`);
+        setText(
+            "riEvidenceCount",
+            `(${counts.needs_evidence ?? needsEvidence.length})`,
+        );
+        setText("riMissingCount", `(${counts.missing ?? missing.length})`);
+
+        renderKeywordList("riMatched", "riMatchedEmpty", matched);
+        renderKeywordList("riEvidence", "riEvidenceEmpty", needsEvidence);
+        renderKeywordList("riMissing", "riMissingEmpty", missing);
+
+        renderPriorityImprovements(data.priority_improvements);
+        renderRecommendations(data.recommendations);
+
+        setText("riExplanation", data.explanation || "");
+    }
+
+    function getCsrfToken() {
+        const input = document.querySelector(
+            '#riCsrfForm input[name="csrfmiddlewaretoken"]',
+        );
+
+        return input ? input.value : "";
+    }
+
+    async function analyzeResume() {
+        const jobDescription = jobDescriptionField.value.trim();
+
+        if (!jobDescription) {
+            setStatus("Paste a job description before running the analysis.", true);
+            jobDescriptionField.focus();
+            return;
+        }
+
+        if (
+            !window.BxBResumeBuilder ||
+            typeof window.BxBResumeBuilder.getResumeDataForAnalysis !== "function"
+        ) {
+            setStatus(
+                "Resume data is not available. Refresh the editor and try again.",
+                true,
+            );
+            return;
+        }
+
+        const analysisUrl = panel.dataset.analysisUrl;
+
+        if (!analysisUrl) {
+            setStatus(
+                "The analysis endpoint is not configured. Check the Django URL in editor.html.",
+                true,
+            );
+            return;
+        }
+
+        const resumeData =
+            window.BxBResumeBuilder.getResumeDataForAnalysis();
+        const csrfToken = getCsrfToken();
+
+        button.disabled = true;
+        button.setAttribute("aria-busy", "true");
+        setStatus("Analyzing your resume against this job description…");
+
+        try {
+            const headers = {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            };
+
+            if (csrfToken) {
+                headers["X-CSRFToken"] = csrfToken;
+            }
+
+            const response = await fetch(analysisUrl, {
+                method: "POST",
+                credentials: "same-origin",
+                headers,
+                body: JSON.stringify({
+                    job_description: jobDescription,
+                    resume: resumeData,
+                }),
+            });
+
+            let data;
+
+            try {
+                data = await response.json();
+            } catch (_error) {
+                throw new Error(
+                    "The server returned an unreadable response. Check the Django terminal for errors.",
+                );
+            }
+
+            if (!response.ok || data.status === "error") {
+                throw new Error(
+                    data.message || `Analysis request failed (${response.status}).`,
+                );
+            }
+
+            if (data.status === "no_keywords") {
+                data.ats_score = null;
+                data.score_category = "Unavailable";
+                data.score_description =
+                    data.message ||
+                    "No supported job-description keywords were detected.";
+
+                data.score_method =
+                    "No score was calculated because the analyzer could not identify supported keywords in this job description.";
+
+                data.counts = {
+                    matched: 0,
+                    needs_evidence: 0,
+                    missing: 0,
+                };
+
+                data.priority_improvements = [];
+                data.recommendations = [];
+            }
+
+            renderAnalysis(data);
+
+            setStatus(
+                data.status === "no_keywords"
+                    ? "Analysis completed, but no supported keywords were recognized."
+                    : "Analysis complete. Use the priorities to improve your resume for this role.",
+            );
+        } catch (error) {
+            setStatus(
+                error instanceof Error
+                    ? error.message
+                    : "Unable to analyze the resume. Please try again.",
+                true,
+            );
+        } finally {
+            button.disabled = false;
+            button.removeAttribute("aria-busy");
+        }
+    }
+
+    button.addEventListener("click", analyzeResume);
 })();
