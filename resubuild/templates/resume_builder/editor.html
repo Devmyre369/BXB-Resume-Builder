@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -130,10 +131,7 @@
             align-items: start;
         }
 
-        .editor-panel {
-            min-width: 0;
-        }
-
+        .editor-panel { min-width: 0; }
         .page-heading { margin-bottom: 22px; }
 
         .eyebrow {
@@ -384,9 +382,7 @@
             line-height: 1.8;
         }
 
-        .resume-section {
-            margin-top: 21px;
-        }
+        .resume-section { margin-top: 21px; }
 
         .resume-section h2 {
             margin: 0 0 9px;
@@ -484,6 +480,7 @@
         }
 
         /* Multiple resume drafts */
+
         .draft-toolbar {
             border-bottom: 1px solid var(--border);
             background: #0c101b;
@@ -524,9 +521,152 @@
             outline: 2px solid rgba(182, 167, 255, .25);
         }
 
-        .draft-toolbar-inner .btn {
-            min-height: 40px;
+        .draft-toolbar-inner .btn { min-height: 40px; }
+
+        /* Template 1: ATS-first. This is the default document design. */
+
+        .resume-paper.template-ats {
+            border-top: 0;
+            font-family: Arial, Helvetica, sans-serif;
         }
+
+        .template-ats .resume-header {
+            border-bottom: 2px solid #303747;
+        }
+
+        .template-ats .resume-header h1 {
+            font-family: Arial, Helvetica, sans-serif;
+            letter-spacing: 0;
+        }
+
+        .template-ats .resume-role,
+        .template-ats .resume-section h2,
+        .template-ats .entry-subtitle {
+            color: #303747 !important;
+        }
+
+        .template-ats .resume-section h2 { letter-spacing: .8px; }
+
+        .template-ats .skills-preview span {
+            padding: 0;
+            background: transparent;
+            color: #353b48;
+        }
+
+        .template-ats .skills-preview span:not(:last-child)::after {
+            content: ",";
+            margin-right: 5px;
+        }
+
+        /* Template 2: Modern professional with a navy banner and blue accent. */
+
+        .resume-paper.template-modern {
+            padding: 0 0 28px;
+            border-top: 0;
+            font-family: "DM Sans", Arial, sans-serif;
+        }
+
+        .template-modern .resume-header {
+            padding: 31px 34px 23px;
+            border-bottom: 4px solid #72b7f3;
+            background: #172943;
+        }
+
+        .template-modern .resume-header h1 {
+            color: #ffffff;
+            font-family: "Manrope", Arial, sans-serif;
+            font-size: clamp(23px, 3vw, 31px);
+            letter-spacing: -.5px;
+        }
+
+        .template-modern .resume-role { color: #b9dcff; }
+        .template-modern .resume-contact { color: #e0e9f5; }
+
+        .template-modern .resume-section {
+            margin-right: 34px;
+            margin-left: 34px;
+        }
+
+        .template-modern .resume-section h2 {
+            border-bottom: 1px solid #d7e5f2;
+            color: #245d91;
+            letter-spacing: 1px;
+        }
+
+        .template-modern .resume-role,
+        .template-modern .entry-subtitle {
+            color: #27659a !important;
+        }
+
+        .template-modern .skills-preview span {
+            border: 1px solid #d7e5f2;
+            background: #eef6fd;
+            color: #24537d;
+        }
+
+        .template-modern .preview-footer {
+            margin-right: 34px;
+            margin-left: 34px;
+            border-color: #d7e5f2;
+        }
+
+        /* Template 3: Academic / research with centered heading and serif typography. */
+
+        .resume-paper.template-academic {
+            font-family: Georgia, "Times New Roman", serif;
+        }
+
+        .template-academic .resume-header {
+            text-align: center;
+            border-bottom: 3px double #376a5b;
+        }
+
+        .template-academic .resume-header h1 {
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: clamp(24px, 3vw, 31px);
+            font-weight: 700;
+            letter-spacing: 0;
+        }
+
+        .template-academic .resume-role {
+            color: #376a5b;
+            font-family: "DM Sans", Arial, sans-serif;
+        }
+
+        .template-academic .resume-contact {
+            color: #535d59;
+            font-family: "DM Sans", Arial, sans-serif;
+        }
+
+        .template-academic .resume-section h2 {
+            border-bottom: 1px solid #abc9bf;
+            color: #285447;
+            font-family: "DM Sans", Arial, sans-serif;
+            letter-spacing: 1px;
+        }
+
+        .template-academic .resume-section p,
+        .template-academic .preview-list li {
+            font-size: 10.5px;
+        }
+
+        .template-academic .entry-subtitle {
+            color: #376a5b !important;
+        }
+
+        .template-academic .skills-preview span {
+            padding: 0;
+            background: transparent;
+            color: #344b43;
+            font-family: "DM Sans", Arial, sans-serif;
+        }
+
+        .template-academic .skills-preview span:not(:last-child)::after {
+            content: ";";
+            margin-right: 5px;
+        }
+
+        .draft-toolbar-inner select#templateSelect { min-width: 190px; }
 
         @media (max-width: 950px) {
             .workspace {
@@ -543,6 +683,14 @@
             .save-status { display: none; }
             .header-actions { gap: 6px; }
             .btn { padding: 8px 10px; font-size: 11px; }
+
+            .draft-toolbar-inner select,
+            .draft-toolbar-inner select#templateSelect {
+                flex: 1 1 140px;
+                min-width: 130px;
+                max-width: none;
+            }
+
             .workspace { margin-top: 20px; }
             .field-grid { grid-template-columns: 1fr; }
             .field-full { grid-column: auto; }
@@ -612,12 +760,41 @@
                 page-break-inside: avoid;
             }
 
-            .resume-section h2 {
-                color: #554592 !important;
+            .template-ats .resume-section h2 {
+                color: #303747 !important;
             }
 
-            .skills-preview span {
-                background: #f0edff !important;
+            .template-modern .resume-section h2 {
+                color: #245d91 !important;
+            }
+
+            .template-academic .resume-section h2 {
+                color: #285447 !important;
+            }
+
+            .template-ats .skills-preview span,
+            .template-academic .skills-preview span {
+                background: transparent !important;
+            }
+
+            .template-modern .skills-preview span {
+                background: #eef6fd !important;
+            }
+
+            .template-modern .resume-paper { padding: 0 !important; }
+
+            .template-modern .resume-header {
+                padding: 15mm 17mm 8mm !important;
+            }
+
+            .template-modern .resume-section {
+                margin-right: 17mm !important;
+                margin-left: 17mm !important;
+            }
+
+            .template-modern .preview-footer {
+                margin-right: 17mm !important;
+                margin-left: 17mm !important;
             }
         }
     </style>
@@ -649,6 +826,13 @@
             <label for="resumeSelect">Your resumes</label>
 
             <select id="resumeSelect" aria-label="Select a saved resume"></select>
+
+            <label for="templateSelect">Template</label>
+            <select id="templateSelect" aria-label="Choose a resume template" title="Choose a resume template">
+                <option value="ats">ATS-first</option>
+                <option value="modern">Modern professional</option>
+                <option value="academic">Academic / research</option>
+            </select>
 
             <button class="btn" type="button" id="newResume">+ New resume</button>
             <button class="btn" type="button" id="renameResume">Rename</button>
@@ -872,11 +1056,11 @@
                     <h2>Live preview</h2>
                     <p>Your resume updates as you type.</p>
                 </div>
-                <span class="eyebrow">ATS-FIRST LAYOUT</span>
+                <span class="eyebrow" id="templateLabel">ATS-FIRST LAYOUT</span>
             </div>
 
             <div class="paper-wrap">
-                <article class="resume-paper" id="resumePaper">
+                <article class="resume-paper template-ats" id="resumePaper">
                     <header class="resume-header">
                         <h1 id="previewName">Your Name</h1>
                         <div class="resume-role" id="previewRole" hidden></div>
@@ -1052,6 +1236,43 @@
                 }
             };
 
+            const templates = {
+                ats: {
+                    label: "ATS-FIRST LAYOUT",
+                    className: "template-ats"
+                },
+                modern: {
+                    label: "MODERN PROFESSIONAL",
+                    className: "template-modern"
+                },
+                academic: {
+                    label: "ACADEMIC / RESEARCH",
+                    className: "template-academic"
+                }
+            };
+
+            function normalizeTemplate(value) {
+                return Object.prototype.hasOwnProperty.call(templates, value)
+                    ? value
+                    : "ats";
+            }
+
+            function applyTemplate(value) {
+                const templateId = normalizeTemplate(value);
+                const paper = document.getElementById("resumePaper");
+                const selected = templates[templateId];
+
+                paper.classList.remove(
+                    "template-ats",
+                    "template-modern",
+                    "template-academic"
+                );
+                paper.classList.add(selected.className);
+
+                document.getElementById("templateSelect").value = templateId;
+                document.getElementById("templateLabel").textContent = selected.label;
+            }
+
             function setStatus(message) {
                 saveStatus.textContent = message;
             }
@@ -1086,6 +1307,7 @@
                         project: "Project",
                         experience: "Experience"
                     };
+
                     label.textContent = `${names[type]} ${index + 1}`;
                 });
             }
@@ -1120,6 +1342,7 @@
 
             function hasAnyValue(object) {
                 if (!object || typeof object !== "object") return false;
+
                 return Object.values(object).some(
                     value => String(value || "").trim() !== ""
                 );
@@ -1200,7 +1423,11 @@
                     addParagraph(wrapper, detail, "entry-detail");
 
                     if (type === "project" && entry.link) {
-                        addParagraph(wrapper, "Project link: " + entry.link, "entry-detail");
+                        addParagraph(
+                            wrapper,
+                            "Project link: " + entry.link,
+                            "entry-detail"
+                        );
                     }
 
                     target.appendChild(wrapper);
@@ -1230,7 +1457,10 @@
 
                 safeText("previewName", (data.name || "").trim(), "Your Name");
 
-                const role = safeText("previewRole", (data.targetRole || "").trim());
+                const role = safeText(
+                    "previewRole",
+                    (data.targetRole || "").trim()
+                );
                 role.hidden = !(data.targetRole || "").trim();
 
                 const contacts = [
@@ -1247,12 +1477,15 @@
                 );
                 contactNode.hidden = contacts.length === 0;
 
-                const summary = safeText("previewSummary", data.summary.trim());
+                safeText("previewSummary", (data.summary || "").trim());
                 document.getElementById("summarySection").hidden =
-                    !data.summary.trim();
+                    !(data.summary || "").trim();
 
                 renderEntries(
-                    "previewEducation", "educationSection", data.education, "education"
+                    "previewEducation",
+                    "educationSection",
+                    data.education,
+                    "education"
                 );
 
                 const skillsTarget = document.getElementById("previewSkills");
@@ -1271,12 +1504,17 @@
                 });
 
                 renderEntries(
-                    "previewProjects", "projectsSection", data.project, "project"
+                    "previewProjects",
+                    "projectsSection",
+                    data.project,
+                    "project"
                 );
 
                 renderEntries(
-                    "previewExperience", "experienceSection",
-                    data.experience, "experience"
+                    "previewExperience",
+                    "experienceSection",
+                    data.experience,
+                    "experience"
                 );
 
                 renderLines(
@@ -1292,13 +1530,13 @@
                 );
 
                 const anyContent = Boolean(
-                    data.name.trim() ||
-                    data.targetRole.trim() ||
+                    (data.name || "").trim() ||
+                    (data.targetRole || "").trim() ||
                     contacts.length ||
-                    data.summary.trim() ||
+                    (data.summary || "").trim() ||
                     skills.length ||
-                    data.certifications.trim() ||
-                    data.achievements.trim() ||
+                    (data.certifications || "").trim() ||
+                    (data.achievements || "").trim() ||
                     data.education.some(hasAnyValue) ||
                     data.project.some(hasAnyValue) ||
                     data.experience.some(hasAnyValue)
@@ -1308,7 +1546,10 @@
             }
 
             function makeDraftId() {
-                if (window.crypto && typeof window.crypto.randomUUID === "function") {
+                if (
+                    window.crypto &&
+                    typeof window.crypto.randomUUID === "function"
+                ) {
                     return window.crypto.randomUUID();
                 }
 
@@ -1323,6 +1564,7 @@
                     id: makeDraftId(),
                     name: name.trim().slice(0, 60) || "My Resume",
                     data,
+                    template: "ats",
                     updatedAt: new Date().toISOString()
                 };
             }
@@ -1363,6 +1605,9 @@
                 if (!activeDraft) return false;
 
                 activeDraft.data = collectDraft();
+                activeDraft.template = normalizeTemplate(
+                    document.getElementById("templateSelect").value
+                );
                 activeDraft.updatedAt = new Date().toISOString();
 
                 return persistDrafts(statusMessage);
@@ -1399,6 +1644,8 @@
 
                 if (!draft) return;
 
+                draft.template = normalizeTemplate(draft.template);
+                applyTemplate(draft.template);
                 loadDraftData(draft.data || {});
                 renderDraftSelect();
                 setStatus("Opened: " + draft.name);
@@ -1427,6 +1674,10 @@
                         typeof item.data === "object" &&
                         !Array.isArray(item.data)
                     );
+
+                    drafts.forEach((draft) => {
+                        draft.template = normalizeTemplate(draft.template);
+                    });
 
                     activeDraftId = registry.activeDraftId;
 
@@ -1626,6 +1877,7 @@
             });
 
             function printResume() {
+                applyTemplate(document.getElementById("templateSelect").value);
                 updatePreview();
                 window.print();
             }
@@ -1638,6 +1890,15 @@
             document.getElementById("renameResume").addEventListener("click", renameResume);
             document.getElementById("deleteResume").addEventListener("click", deleteResume);
             document.getElementById("resumeSelect").addEventListener("change", switchResume);
+
+            document.getElementById("templateSelect").addEventListener("change", () => {
+                const selectedTemplate = normalizeTemplate(
+                    document.getElementById("templateSelect").value
+                );
+
+                applyTemplate(selectedTemplate);
+                saveDraft("Template changed and saved");
+            });
 
             loadDraft();
         })();
