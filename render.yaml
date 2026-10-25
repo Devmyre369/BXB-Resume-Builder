@@ -1,0 +1,24 @@
+databases:
+  - name: bxb-resume-builder-db
+    databaseName: bxb_resume_builder
+    user: bxb_resume_builder
+    plan: free
+
+services:
+  - type: web
+    name: bxb-resume-builder
+    runtime: python
+    rootDir: resubuild
+    plan: free
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --no-input
+    startCommand: python manage.py migrate --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
+    healthCheckPath: /
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: bxb-resume-builder-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "false"

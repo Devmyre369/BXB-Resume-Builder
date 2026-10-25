@@ -34,6 +34,7 @@
 - [Project Structure](#-project-structure)
 - [Installation](#-installation-and-setup)
 - [Running the Application](#-running-the-application)
+- [Deploy to Render](#deploy-to-render)
 - [Progressive Web App](#-progressive-web-app-pwa)
 - [Privacy and Data Storage](#-privacy-and-data-storage)
 - [Troubleshooting](#-troubleshooting)
@@ -280,6 +281,32 @@ The resulting score is rounded to an integer between 0 and 100.
 
 These are BxB's own heuristic rating bands, not industry-standard ATS thresholds.
 
-### Recommendation priorities
+## Deploy to Render
 
-The analyzer
+This repository includes a Render Blueprint in [`render.yaml`](./render.yaml).
+It provisions a Django web service and a PostgreSQL database, installs the
+Python dependencies, collects static files, and applies database migrations
+when the service starts.
+
+1. Push this repository to GitHub.
+2. In the [Render Dashboard](https://dashboard.render.com/), select **New**
+   and **Blueprint**, then connect the repository.
+3. Review the Blueprint and select **Apply**. Render generates the production
+   `SECRET_KEY` and connects the web service to its database.
+4. Open the deployed service URL and confirm the home page and `/editor/` load.
+
+The Blueprint uses Render's free web-service and PostgreSQL plans. Free web
+services can spin down when idle, and free PostgreSQL databases expire after
+30 days; choose paid plans in `render.yaml` if you need continuously available
+service or longer-term database storage. Resume drafts are kept in browser
+storage, not in the server database, so users should keep using the same
+browser and device or export a backup where available.
+
+For a manual deployment, set the service's **Root Directory** to `resubuild`,
+use `pip install -r requirements.txt && python manage.py collectstatic --no-input`
+as the build command, and
+`python manage.py migrate --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT`
+as the start command. Set `DATABASE_URL` to a Render PostgreSQL connection
+string, `SECRET_KEY` to a generated secret, and `DEBUG` to `false`. If you add a
+custom domain, include its hostname in `ALLOWED_HOSTS` and its HTTPS origin in
+`CSRF_TRUSTED_ORIGINS`.

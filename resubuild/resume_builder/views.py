@@ -99,12 +99,7 @@ def editor(request):
 def service_worker(request):
     """Serve the PWA service worker from the website root."""
 
-    worker_path = (
-        Path(__file__).resolve().parent
-        / "static"
-        / "resume_builder"
-        / "service-worker.js"
-    )
+    worker_path = Path(__file__).resolve().parent / "service_worker.js"
 
     try:
         source = worker_path.read_text(encoding="utf-8")
