@@ -1097,13 +1097,29 @@
         ========================================================= */
         .header-left { display:flex; align-items:center; gap:12px; min-width:0; }
         .back-to-home { white-space:nowrap; }
-        .sidebar-toggle { display:none; white-space:nowrap; }
+        /* Keep the library toggle visible on desktop as well as mobile/tablet. */
+        .sidebar-toggle { display:inline-flex; white-space:nowrap; }
         .resume-sidebar {
             position:fixed; z-index:30; top:72px; bottom:0; left:0;
             display:flex; flex-direction:column; gap:17px; width:282px;
             padding:22px 15px 24px; overflow-y:auto; overscroll-behavior:contain;
             background:var(--panel); border-right:1px solid var(--border);
             box-shadow:8px 0 30px rgba(0,0,0,.04);
+            transition:transform .22s ease, visibility 0s linear .22s;
+        }
+        .resume-sidebar { visibility:visible; }
+        .workspace { transition:width .22s ease, margin .22s ease; }
+        @media (min-width:1101px) {
+            body.sidebar-collapsed .resume-sidebar {
+                transform:translateX(calc(-100% - 12px));
+                visibility:hidden;
+                pointer-events:none;
+            }
+            body:not(.sidebar-collapsed) .resume-sidebar { transition-delay:0s; }
+            body.sidebar-collapsed .workspace {
+                width:calc(100% - 44px);
+                margin-left:22px;
+            }
         }
         .sidebar-heading-row { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
         .sidebar-eyebrow { color:var(--accent); font-size:9px; font-weight:800; letter-spacing:1.7px; }
@@ -1168,7 +1184,7 @@
         }
         @media (max-width:1100px) {
             .sidebar-toggle { display:inline-flex; }
-            .resume-sidebar { top:0; z-index:60; width:min(330px,88vw); padding:22px 16px 26px; transform:translateX(-105%); transition:transform .22s ease; box-shadow:16px 0 42px rgba(0,0,0,.20); }
+            .resume-sidebar { top:0; z-index:60; width:min(330px,88vw); padding:22px 16px 26px; transform:translateX(-105%); visibility:visible; transition:transform .22s ease; box-shadow:16px 0 42px rgba(0,0,0,.20); }
             .resume-sidebar.is-open { transform:translateX(0); }
             .sidebar-close { display:inline-grid; place-items:center; }
             .sidebar-backdrop:not([hidden]) { display:block; position:fixed; inset:0; z-index:55; border:0; border-radius:0; background:rgba(7,10,18,.58); backdrop-filter:blur(2px); }
@@ -1228,6 +1244,7 @@
 </head>
 
 <body>
+    <!-- Sidebar toggle is visible on desktop, tablet, and mobile. -->
     <header class="app-header">
         <div class="header-left">
             <button class="btn sidebar-toggle" id="openSidebar" type="button"
@@ -2790,7 +2807,9 @@
                 activeDraftId = selectedId;
                 loadActiveDraft();
                 persistDrafts("Opened: " + (getActiveDraft()?.name || "resume"));
-                closeSidebar();
+                if (window.matchMedia("(max-width: 1100px)").matches) {
+                    closeSidebar();
+                }
             }
 
             function deleteResume() {
@@ -2931,34 +2950,88 @@
                 });
             });
 
+            const sidebar = document.getElementById("resumeSidebar");
+            const backdrop = document.getElementById("sidebarBackdrop");
+            const sidebarToggle = document.getElementById("openSidebar");
+            const isNarrowSidebar = () => window.matchMedia("(max-width: 1100px)").matches;
+
+            function syncSidebarToggle() {
+                if (!sidebarToggle || !sidebar) return;
+                if (isNarrowSidebar()) {
+                    const opened = sidebar.classList.contains("is-open");
+                    sidebarToggle.textContent = opened ? "× Close library" : "☰ Library";
+                    sidebarToggle.setAttribute("aria-expanded", String(opened));
+                } else {
+                    const expanded = !document.body.classList.contains("sidebar-collapsed");
+                    sidebarToggle.textContent = expanded ? "☰ Hide library" : "☰ Show library";
+                    sidebarToggle.setAttribute("aria-expanded", String(expanded));
+                }
+            }
+
             function openSidebar() {
-                const sidebar = document.getElementById("resumeSidebar");
-                const backdrop = document.getElementById("sidebarBackdrop");
-                const toggle = document.getElementById("openSidebar");
-                sidebar.classList.add("is-open");
-                backdrop.hidden = false;
-                document.body.classList.add("sidebar-open");
-                toggle?.setAttribute("aria-expanded", "true");
+                if (!sidebar || !backdrop) return;
+
+                if (isNarrowSidebar()) {
+                    sidebar.classList.add("is-open");
+                    backdrop.hidden = false;
+                    document.body.classList.add("sidebar-open");
+                } else {
+                    sidebar.classList.remove("is-open");
+                    backdrop.hidden = true;
+                    document.body.classList.remove("sidebar-open", "sidebar-collapsed");
+                }
+
+                syncSidebarToggle();
             }
 
             function closeSidebar() {
-                const sidebar = document.getElementById("resumeSidebar");
-                const backdrop = document.getElementById("sidebarBackdrop");
-                const toggle = document.getElementById("openSidebar");
                 if (!sidebar || !backdrop) return;
-                sidebar.classList.remove("is-open");
-                backdrop.hidden = true;
-                document.body.classList.remove("sidebar-open");
-                toggle?.setAttribute("aria-expanded", "false");
+
+                if (isNarrowSidebar()) {
+                    sidebar.classList.remove("is-open");
+                    backdrop.hidden = true;
+                    document.body.classList.remove("sidebar-open");
+                } else {
+                    sidebar.classList.remove("is-open");
+                    backdrop.hidden = true;
+                    document.body.classList.remove("sidebar-open");
+                    document.body.classList.add("sidebar-collapsed");
+                }
+
+                syncSidebarToggle();
             }
 
-            document.getElementById("openSidebar").addEventListener("click", openSidebar);
+            function toggleSidebar() {
+                if (isNarrowSidebar()) {
+                    sidebar.classList.contains("is-open") ? closeSidebar() : openSidebar();
+                } else {
+                    document.body.classList.contains("sidebar-collapsed") ? openSidebar() : closeSidebar();
+                }
+            }
+
+            sidebarToggle.addEventListener("click", toggleSidebar);
             document.getElementById("closeSidebar").addEventListener("click", closeSidebar);
-            document.getElementById("sidebarBackdrop").addEventListener("click", closeSidebar);
+            backdrop.addEventListener("click", closeSidebar);
             document.addEventListener("keydown", (event) => {
-                if (event.key === "Escape") closeSidebar();
+                if (event.key === "Escape" && (isNarrowSidebar() ? sidebar.classList.contains("is-open") : !document.body.classList.contains("sidebar-collapsed"))) {
+                    closeSidebar();
+                }
             });
 
+            // When crossing the tablet/desktop breakpoint, reset drawer-only state.
+            let lastNarrowState = isNarrowSidebar();
+            window.addEventListener("resize", () => {
+                const nowNarrow = isNarrowSidebar();
+                if (nowNarrow !== lastNarrowState) {
+                    sidebar.classList.remove("is-open");
+                    backdrop.hidden = true;
+                    document.body.classList.remove("sidebar-open", "sidebar-collapsed");
+                    lastNarrowState = nowNarrow;
+                }
+                syncSidebarToggle();
+            });
+
+            syncSidebarToggle();
             loadDraft();
         })();
     </script>
