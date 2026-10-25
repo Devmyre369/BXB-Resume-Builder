@@ -6,7 +6,10 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 
 from .services.ats_analyzer import analyze_job_description
+from pathlib import Path
 
+from django.http import HttpResponse, HttpResponseNotFound
+from django.views.decorators.cache import never_cache
 
 @require_POST
 def analyze_resume_api(request):
@@ -89,3 +92,33 @@ def home(request):
 
 def editor(request):
     return render(request, 'resume_builder/editor.html')
+
+
+
+@never_cache
+def service_worker(request):
+    """Serve the PWA service worker from the website root."""
+
+    worker_path = (
+        Path(__file__).resolve().parent
+        / "static"
+        / "resume_builder"
+        / "service-worker.js"
+    )
+
+    try:
+        source = worker_path.read_text(encoding="utf-8")
+    except OSError:
+        return HttpResponseNotFound(
+            "PWA service worker is not installed."
+        )
+
+    response = HttpResponse(
+        source,
+        content_type="application/javascript; charset=utf-8",
+    )
+
+    response["Service-Worker-Allowed"] = "/"
+    response["Cache-Control"] = "no-cache, no-store, must-revalidate"
+
+    return response
